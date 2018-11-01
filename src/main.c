@@ -19,9 +19,8 @@
 //		- no port should have more than 16 pins
 
 struct PinLocation {
-	GPIO_TypeDef port;
+	GPIO_TypeDef * port;
 	uint16_t pin;
-
 };
 
 // Reference the entire PinLocation struct just as a PinLocation
@@ -48,7 +47,11 @@ static const PinLocation LargeButton = { GPIOB, 14 };
 static const PinLocation RxPin = { GPIOA, 2 };
 static const PinLocation TxPin = { GPIOA, 3 };
 
+
+
 // Array of all pins utilized for GPIO initialization
+/* The variable needs to be defined or else C does not realize it as unchangeable
+ * and will not allow the number to be a size for the PinLocation array */
 #define NUMBER_OF_OUTPUT_PINS ((int)15)
 static const PinLocation *outputPins[NUMBER_OF_OUTPUT_PINS] = {
 		&VacuumMotor, &RecircMotor, &MixingMotor,
@@ -58,7 +61,6 @@ static const PinLocation *outputPins[NUMBER_OF_OUTPUT_PINS] = {
 		&LowWaterLED, &BrewTimeLED, &CoolingOnLED, &PressureOnLED,
 		&TxPin};
 
-
 #define NUMBER_OF_INPUT_PINS ((int)4)
 static const PinLocation *inputPins[NUMBER_OF_INPUT_PINS] = {
 		&SmallButton, &MediumButton, &LargeButton,
@@ -67,21 +69,17 @@ static const PinLocation *inputPins[NUMBER_OF_INPUT_PINS] = {
 
 // Array of all ports utilized for GPIO initialization
 #define NUMBER_OF_PORTS 2
-GPIO_TypeDef knownUsedPorts[NUMBER_OF_PORTS] = { GPIOA, GPIOB };
+static const GPIO_TypeDef knownUsedPorts[NUMBER_OF_PORTS] = { GPIOA, GPIOB };
 
 void initializeAllPins();
 void initializeGPIO(GPIO_TypeDef GPIOx, uint16_t numberOfPins, PinLocation locations[],
 		GPIOSpeed_TypeDef speed, GPIOMode_TypeDef mode, GPIOOType_TypeDef type, GPIOPuPd_TypeDef pushPull);
 uint32_t getPortRCC_Constant(GPIO_TypeDef GPIOx);
-
-
 uint8_t sameGPIO_TypeDef(GPIO_TypeDef* def1, GPIO_TypeDef* def2);
 
 
 int main(void) {
 	// SystemInit() call from mcu sets the clock speed
-
-
 
 	// Initialize all GPIO pins
 	initializeAllPins();
@@ -90,17 +88,21 @@ int main(void) {
 
 	while(1) {
 
-		if(bool = 0) {
+		if(bool) {
 
-			GPIO_ResetBits(&SonarSensor.port, &SonarSensor.pin);
+			if(sameGPIO_TypeDef(LowWaterLED.port, GPIOB)) {
 
-			bool = 1;
+				int port = LowWaterLED.pin;
+
+				GPIO_ResetBits(LowWaterLED.port, LowWaterLED.pin);
+			}
+			bool = 0;
 		}
 		else {
 
-			GPIO_SetBits(&SonarSensor.port, &SonarSensor.pin);
+			GPIO_SetBits(LowWaterLED.port, LowWaterLED.pin);
 
-			bool = 0;
+			bool = 1;
 		}
 
 		int j = 0;
@@ -121,10 +123,10 @@ uint32_t getPortRCC_Constant(GPIO_TypeDef GPIOx) {
 	if(sameGPIO_TypeDef(&GPIOx, GPIOC)) return RCC_AHB1Periph_GPIOC;
 	if(sameGPIO_TypeDef(&GPIOx, GPIOD)) return RCC_AHB1Periph_GPIOD;
 	if(sameGPIO_TypeDef(&GPIOx, GPIOE)) return RCC_AHB1Periph_GPIOE;
-	if(sameGPIO_TypeDef(&GPIOx, GPIOF)) return RCC_AHB1Periph_GPIOF;
-	if(sameGPIO_TypeDef(&GPIOx, GPIOG)) return RCC_AHB1Periph_GPIOG;
-	if(sameGPIO_TypeDef(&GPIOx, GPIOH)) return RCC_AHB1Periph_GPIOH;
-	if(sameGPIO_TypeDef(&GPIOx, GPIOI)) return RCC_AHB1Periph_GPIOI;
+//	if(sameGPIO_TypeDef(&GPIOx, GPIOF)) return RCC_AHB1Periph_GPIOF;
+//	if(sameGPIO_TypeDef(&GPIOx, GPIOG)) return RCC_AHB1Periph_GPIOG;
+//	if(sameGPIO_TypeDef(&GPIOx, GPIOH)) return RCC_AHB1Periph_GPIOH;
+//	if(sameGPIO_TypeDef(&GPIOx, GPIOI)) return RCC_AHB1Periph_GPIOI;
 
 	return 0;
 }
@@ -133,10 +135,10 @@ void initializeAllPins() {
 	for(uint8_t portIndex = 0; portIndex < NUMBER_OF_PORTS; portIndex++) {
 		GPIO_TypeDef currentPort = knownUsedPorts[portIndex];
 
-		initializeGPIO(currentPort, NUMBER_OF_OUTPUT_PINS, outputPins,
+		initializeGPIO(currentPort, NUMBER_OF_OUTPUT_PINS, *outputPins,
 				GPIO_Speed_50MHz, GPIO_Mode_OUT, GPIO_OType_PP, GPIO_PuPd_UP);
 
-		initializeGPIO(currentPort, NUMBER_OF_INPUT_PINS, inputPins,
+		initializeGPIO(currentPort, NUMBER_OF_INPUT_PINS, *inputPins,
 				GPIO_Speed_50MHz, GPIO_Mode_OUT, GPIO_OType_PP, GPIO_PuPd_UP);
 	}
 }
@@ -144,7 +146,9 @@ void initializeGPIO(GPIO_TypeDef GPIOx, uint16_t numberOfPins, PinLocation locat
 		GPIOSpeed_TypeDef speed, GPIOMode_TypeDef mode,
 		GPIOOType_TypeDef otype, GPIOPuPd_TypeDef pushPull) {
 
-	RCC_AHB1PeriphClockCmd(getPortRCC_Constant(GPIOx), ENABLE);
+	uint32_t RCC_AHBPeriph = getPortRCC_Constant(GPIOx);
+
+	RCC_AHB1PeriphClockCmd(RCC_AHBPeriph, ENABLE);
 
 	GPIO_InitTypeDef currentPort_InitStruct;
 
@@ -154,7 +158,7 @@ void initializeGPIO(GPIO_TypeDef GPIOx, uint16_t numberOfPins, PinLocation locat
 	currentPort_InitStruct.GPIO_PuPd = pushPull; // Pull up
 
 	for(uint16_t pinIndex = 0; pinIndex < numberOfPins; pinIndex++) {
-		if(sameGPIO_TypeDef(&locations[pinIndex].port, &GPIOx)) {
+		if(sameGPIO_TypeDef(locations[pinIndex].port, &GPIOx)) {
 			// This takes in a binary number... To use multiple LED's one needs to use a Bitwise OR operator
 			currentPort_InitStruct.GPIO_Pin |= locations[pinIndex].pin;
 		}
