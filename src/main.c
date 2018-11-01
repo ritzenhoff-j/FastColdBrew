@@ -85,28 +85,6 @@ int main(void) {
 
 	SystemInit();
 
-	/*
-	uint32_t RCC_AHBPeriph = getPortRCC_Constant(LowWaterLED.port);
-	uint32_t RCC_AHB_Actual = RCC_AHB1Periph_GPIOB;
-
-	RCC_AHB1PeriphClockCmd(RCC_AHB_Actual, ENABLE);
-
-
-	GPIO_InitTypeDef currentPort_InitStruct;
-
-	currentPort_InitStruct.GPIO_Pin = GPIO_Pin_3;
-	currentPort_InitStruct.GPIO_Speed = GPIO_Speed_50MHz; // 50 MHZ clock frequency
-	currentPort_InitStruct.GPIO_Mode = GPIO_Mode_OUT; // Set GPIO output
-	currentPort_InitStruct.GPIO_OType = GPIO_OType_PP ; // Push pull mod
-	currentPort_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL; // Pull up
-
-	int actual = GPIOB;
-	int found = LowWaterLED.port;
-
-
-	GPIO_Init(found, &currentPort_InitStruct);
-	*/
-
 
 	// Initialize all GPIO pins
 	initializeAllPins();
@@ -140,6 +118,14 @@ int main(void) {
 }
 
 
+
+
+
+
+
+
+
+
 uint32_t getPortRCC_Constant(GPIO_TypeDef * GPIOx) {
 	GPIO_TypeDef* port = getPort(GPIOx);
 
@@ -155,7 +141,6 @@ uint32_t getPortRCC_Constant(GPIO_TypeDef * GPIOx) {
 
 	return 0;
 }
-
 GPIO_TypeDef* getPort(GPIO_TypeDef* GPIOx) {
 	if(sameGPIO_TypeDef(GPIOx, GPIOA)) return GPIOA;
 	if(sameGPIO_TypeDef(GPIOx, GPIOB)) return GPIOB;
