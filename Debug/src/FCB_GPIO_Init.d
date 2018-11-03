@@ -1,4 +1,4 @@
-src/main.o: ../src/main.c \
+src/FCB_GPIO_Init.o: ../src/FCB_GPIO_Init.c \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/CMSIS/device/stm32f4xx.h \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/CMSIS/core/core_cm4.h \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/CMSIS/core/core_cmInstr.h \
