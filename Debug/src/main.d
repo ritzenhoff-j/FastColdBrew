@@ -26,7 +26,16 @@ src/main.o: ../src/main.c \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_wwdg.h \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/misc.h \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_flash_ramfunc.h \
- ../src/FCB_GPIO_Pins.h ../src/FCB_GPIO_Init.h
+ ../src/FCB_GPIO_Pins.h ../src/FCB_GPIO_Init.h ../src/FCB_TempSensor.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_onewire.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_rcc.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_gpio.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/defines.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_delay.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/attributes.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_gpio.h \
+ ../src/FCB_SonarSensor.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_delay.h
 
 C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/CMSIS/device/stm32f4xx.h:
 
@@ -85,3 +94,23 @@ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/st
 ../src/FCB_GPIO_Pins.h:
 
 ../src/FCB_GPIO_Init.h:
+
+../src/FCB_TempSensor.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_onewire.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_rcc.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_gpio.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/defines.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_delay.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/attributes.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_gpio.h:
+
+../src/FCB_SonarSensor.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_delay.h:

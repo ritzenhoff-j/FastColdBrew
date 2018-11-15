@@ -23,11 +23,22 @@
 #include FCB_GPIO_INIT
 #endif
 
+#ifndef FCB_TEMP_SENSOR
+#define FCB_TEMP_SENSOR "FCB_TempSensor.h"
+#include FCB_TEMP_SENSOR
+#endif
+
+#ifndef FCB_SONAR_SENSER
+#define FCB_SONAR_SENSER "FCB_SonarSensor.h"
+#include FCB_SONAR_SENSER
+#endif
+
+#ifndef TM_DELAY
+#define TM_DELAY "tm_stm32f4_delay.h"
+#include TM_DELAY
+#endif
 
 
-void initializeAll_Peripherals();
-void initialize_TemperatureSensor();
-void initialize_SonarSensor();
 
 
 void testFlashingLight();
@@ -37,6 +48,8 @@ void testButtonFlashingLight();
 void coolWaterTank();
 void setSolenoidsForRecirc();
 void setSolenoidsForPumping();
+
+void initializeAll_Peripherals();
 
 enum ColdBrewState {
 	COOLING,
@@ -55,13 +68,11 @@ int main(void) {
 	// Initialize all GPIO pins
 	initializeAll_IOPins();
 
-	testFlashingLight();
-
-	//testButtonFlashingLight();
-
-
 	// Initialize all Peripheral Sensors (Temp, Sonar)
 	initializeAll_Peripherals();
+
+	// testFlashingLight();
+	testButtonFlashingLight();
 
 	// The machine always starts by cooling
 	machineState = COOLING;
@@ -223,23 +234,17 @@ void testButtonFlashingLight() {
 	}
 }
 
-
+/**
+ * Initialize all peripherals of the Fast Cold Brew Machine
+ */
 void initializeAll_Peripherals() {
-	// this will initialize connection with the DS11adnadsfkn Temperature Sensor
-	initialize_TemperatureSensor();
+	TM_DELAY_Init();
 
-	initialize_SonarSensor();
+	initializeAllTempSensors();
+
+	initializeSonarSensor();
 }
 
-void initialize_TemperatureSensor() {
-	// this will establish communication with the OneWire library and save values
-	// to static references
-}
-
-void initialize_SonarSensor() {
-	// this will establish communication with the HC-SR04 library and save values
-	// to static references
-}
 
 
 

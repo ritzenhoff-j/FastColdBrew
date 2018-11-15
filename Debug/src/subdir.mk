@@ -5,18 +5,24 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../src/FCB_GPIO_Init.c \
+../src/FCB_SonarSensor.c \
+../src/FCB_TempSensor.c \
 ../src/main.c \
 ../src/syscalls.c \
 ../src/system_stm32f4xx.c 
 
 OBJS += \
 ./src/FCB_GPIO_Init.o \
+./src/FCB_SonarSensor.o \
+./src/FCB_TempSensor.o \
 ./src/main.o \
 ./src/syscalls.o \
 ./src/system_stm32f4xx.o 
 
 C_DEPS += \
 ./src/FCB_GPIO_Init.d \
+./src/FCB_SonarSensor.d \
+./src/FCB_TempSensor.d \
 ./src/main.d \
 ./src/syscalls.d \
 ./src/system_stm32f4xx.d 
