@@ -25,7 +25,7 @@
  * An initialization of all Pins based on PinLocation input and output arrays.
  */
 void initializeAll_IOPins() {
-	for(uint8_t portIndex = 1; portIndex < NUMBER_OF_PORTS; portIndex++) {
+	for(uint8_t portIndex = 0; portIndex < NUMBER_OF_PORTS; portIndex++) {
 
 		GPIO_TypeDef* currentPort = knownUsedPorts[portIndex];
 
@@ -34,6 +34,8 @@ void initializeAll_IOPins() {
 
 		initializeGPIO(currentPort, NUMBER_OF_INPUT_PINS, *inputPins,
 				GPIO_Speed_50MHz, GPIO_Mode_IN, GPIO_OType_PP, GPIO_PuPd_DOWN);
+
+		initializeTimerPort(currentPort, NUMBER_OF_PWM_PINS, *pwmPins);
 	}
 }
 void initializeGPIO(GPIO_TypeDef* GPIOx, uint16_t numberOfPins, PinLocation locations[],
@@ -64,48 +66,26 @@ void initializeGPIO(GPIO_TypeDef* GPIOx, uint16_t numberOfPins, PinLocation loca
 	GPIO_Init(getPort(GPIOx), &currentPort_InitStruct); // do the init
 }
 
-uint32_t getPortRCC_Constant(GPIO_TypeDef * GPIOx) {
-	GPIO_TypeDef* port = getPort(GPIOx);
-
-	if(port == GPIOA) return RCC_AHB1Periph_GPIOA;
-	if(port == GPIOB) return RCC_AHB1Periph_GPIOB;
-	if(port == GPIOC) return RCC_AHB1Periph_GPIOC;
-	if(port == GPIOD) return RCC_AHB1Periph_GPIOD;
-	if(port == GPIOE) return RCC_AHB1Periph_GPIOE;
-//	if(sameGPIO_TypeDef(&GPIOx, GPIOF)) return RCC_AHB1Periph_GPIOF;
-//	if(sameGPIO_TypeDef(&GPIOx, GPIOG)) return RCC_AHB1Periph_GPIOG;
-//	if(sameGPIO_TypeDef(&GPIOx, GPIOH)) return RCC_AHB1Periph_GPIOH;
-//	if(sameGPIO_TypeDef(&GPIOx, GPIOI)) return RCC_AHB1Periph_GPIOI;
-
-	return 0;
-}
 
 /**
- * Returns a complete pointer GPIO object based on a few matching fields of the input.
+ * This must ALWAYS be called AFTER initializing all normal pins.
  */
-GPIO_TypeDef* getPort(GPIO_TypeDef* GPIOx) {
-	if(sameGPIO_TypeDef(GPIOx, GPIOA)) return GPIOA;
-	if(sameGPIO_TypeDef(GPIOx, GPIOB)) return GPIOB;
-	if(sameGPIO_TypeDef(GPIOx, GPIOC)) return GPIOC;
-	if(sameGPIO_TypeDef(GPIOx, GPIOD)) return GPIOD;
-	if(sameGPIO_TypeDef(GPIOx, GPIOE)) return GPIOE;
-//	if(sameGPIO_TypeDef(GPIOx, GPIOF)) return GPIOF;
-//	if(sameGPIO_TypeDef(GPIOx, GPIOG)) return GPIOG;
-//	if(sameGPIO_TypeDef(GPIOx, GPIOH)) return GPIOH;
-//	if(sameGPIO_TypeDef(GPIOx, GPIOI)) return GPIOI;
+void initializeTimerPort(GPIO_TypeDef* GPIOx, uint16_t numberOfPossiblePins, PWM_PinLocation locations[]) {
+	GPIO_InitTypeDef  currentPort_InitStruct;
 
-	return 0;
-}
-uint8_t sameGPIO_TypeDef(GPIO_TypeDef* def1, GPIO_TypeDef* def2) {
-	return (uint8_t) (def1->MODER == def2->MODER);
+	currentPort_InitStruct.GPIO_Mode = GPIO_Mode_AF; // set AF Mode
 
-	/*(def1->BSRRH == def2->BSRRH)
-						& (def1->BSRRL == def2->BSRRL)
-						& (def1->IDR == def2->IDR)
-						& (def1->LCKR == def2->LCKR)
+	for(uint16_t i = 0; i < numberOfPossiblePins; i++) {
+		PWM_PinLocation currentPWMIO = locations[i];
+		PinLocation currentIO = *currentPWMIO.location;
 
-						& (def1->ODR == def2->ODR)
-						& (def1->OSPEEDR == def2->OSPEEDR)
-						& (def1->OTYPER == def2->OTYPER)
-						& (def1->PUPDR == def2->PUPDR); */
+		if(sameGPIO_TypeDef(currentIO.port, GPIOx)) {
+			// This takes in a binary number... To use multiple LED's one needs to use a Bitwise OR operator
+			currentPort_InitStruct.GPIO_Pin |= currentIO.pin;
+
+			GPIO_PinAFConfig (getPort(GPIOx), getPinSource(currentIO.pin), getTimer_AF(currentPWMIO.timerIndex));
+		}
+	}
+
+	GPIO_Init(getPort(GPIOx), &currentPort_InitStruct); // do the init
 }
