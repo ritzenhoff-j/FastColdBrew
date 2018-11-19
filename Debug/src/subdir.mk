@@ -5,6 +5,8 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../src/FCB_GPIO_Init.c \
+../src/FCB_GPIO_Pins.c \
+../src/FCB_PWM.c \
 ../src/FCB_SonarSensor.c \
 ../src/FCB_TempSensor.c \
 ../src/main.c \
@@ -13,6 +15,8 @@ C_SRCS += \
 
 OBJS += \
 ./src/FCB_GPIO_Init.o \
+./src/FCB_GPIO_Pins.o \
+./src/FCB_PWM.o \
 ./src/FCB_SonarSensor.o \
 ./src/FCB_TempSensor.o \
 ./src/main.o \
@@ -21,6 +25,8 @@ OBJS += \
 
 C_DEPS += \
 ./src/FCB_GPIO_Init.d \
+./src/FCB_GPIO_Pins.d \
+./src/FCB_PWM.d \
 ./src/FCB_SonarSensor.d \
 ./src/FCB_TempSensor.d \
 ./src/main.d \

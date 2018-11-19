@@ -49,6 +49,8 @@
 "inc/tm_stm32f4_pwm.o"
 "inc/tm_stm32f4_timer_properties.o"
 "src/FCB_GPIO_Init.o"
+"src/FCB_GPIO_Pins.o"
+"src/FCB_PWM.o"
 "src/FCB_SonarSensor.o"
 "src/FCB_TempSensor.o"
 "src/main.o"

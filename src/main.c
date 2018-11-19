@@ -23,6 +23,11 @@
 #include FCB_GPIO_INIT
 #endif
 
+#ifndef FCB_PWM_INIT
+#define FCB_PWM_INIT "FCB_PWM.h"
+#include FCB_PWM_INIT
+#endif
+
 #ifndef FCB_TEMP_SENSOR
 #define FCB_TEMP_SENSOR "FCB_TempSensor.h"
 #include FCB_TEMP_SENSOR
@@ -39,6 +44,7 @@
 #endif
 
 
+void SysTickInit(uint16_t frequency);
 
 
 void testFlashingLight();
@@ -62,14 +68,55 @@ enum ColdBrewState {
 
 int main(void) {
 	// SystemInit() call from mcu sets the clock speed
-
 	SystemInit();
+
+	// initialize the tick
+	SysTickInit(1000);
 
 	// Initialize all GPIO pins
 	initializeAll_IOPins();
 
+	// Initialize all PWM pins
+	initializePWM();
+
+
+	// run PWM test
+	int l = 0;
+	int brightness = 0;
+	int increment = 5;
+
+	while (1) {
+		for (int i = 0; i < 20; i++) {
+
+			for(int j = 0; j < 50000; j++) { l = j; }
+
+			setPWM(PWM_VacuumPump.timerIndex, PWM_VacuumPump.channel, brightness);
+
+			brightness += increment;
+		}
+
+		increment = -increment;
+	}
+
+
+
+
+
+
 	// Initialize all Peripheral Sensors (Temp, Sonar)
 	initializeAll_Peripherals();
+
+
+	float temperature = 0;
+	float distance = 0;
+
+	while(1) {
+		temperature = readTemperature(WaterTank);
+		distance = readDistance();
+	}
+
+
+
 
 	// testFlashingLight();
 	testButtonFlashingLight();
@@ -133,7 +180,7 @@ void coolWaterTank() {
 		GPIO_SetBits(PeltierSwitch.port, PeltierSwitch.pin);
 
 		// Turn on the Recirculation Motor
-		GPIO_SetBits(RecircPump.port, RecircPump.pin);
+		// GPIO_SetBits(RecircPump.port, RecircPump.pin);
 
 
 		// declare a variable used if a button has been pressed...
@@ -154,7 +201,7 @@ void coolWaterTank() {
 
 
 		// Turn off the recirc motor
-		GPIO_ResetBits(RecircPump.port, RecircPump.pin);
+		// GPIO_ResetBits(RecircPump.port, RecircPump.pin);
 
 		// Turn off the cooling
 		GPIO_ResetBits(PeltierSwitch.port, PeltierSwitch.pin);
@@ -173,6 +220,13 @@ void coolWaterTank() {
 	machineState = FILLING_VACUUM_CHAMBER;
 }
 
+
+void SysTickInit (uint16_t frequency)
+{
+   RCC_ClocksTypeDef RCC_Clocks;
+   RCC_GetClocksFreq (&RCC_Clocks);
+   (void) SysTick_Config (RCC_Clocks.HCLK_Frequency / frequency);
+}
 
 
 
