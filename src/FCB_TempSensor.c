@@ -44,7 +44,7 @@ uint8_t peltierROM[8];
  * Returns 0 if there was an error while initializing.
  */
 uint8_t initializeAllTempSensors() {
-	return initializeTempSensor(WaterTank) & initializeTempSensor(PeltierHeatSink);
+	return initializeTempSensor(WaterTank); // & initializeTempSensor(PeltierHeatSink);
 }
 
 /**
@@ -78,16 +78,22 @@ uint8_t initializeTempSensor(TempSensor sensor) {
 	// Initialize the temperature sensor on the appropriate port
 	TM_OneWire_Init(tempSensor, tempLocation->port, tempLocation->pin);
 
+	uint32_t breakoutTime = 50000;
+
 	// Check if there is a Temperature Sensor signal on the port
-	while(!TM_OneWire_First(tempSensor));
+	while(!TM_OneWire_First(tempSensor)) {
+		breakoutTime = breakoutTime - 1;
+
+		if(breakoutTime <= 0) return 0;
+	}
 
 	// Write the full Read-Only Memory ID of the sensor to the 8-bit number
 	TM_OneWire_GetFullROM(tempSensor, sensorROM);
 
 	// Set the resolution of the ID'ed ROM on the appropriate port
-	TM_DS18B20_SetResolution(tempSensor, sensorROM, TM_DS18B20_Resolution_12bits);
+	if(!TM_DS18B20_SetResolution(tempSensor, sensorROM, TM_DS18B20_Resolution_12bits)) return 0;
 
-	return 0;
+	return 1;
 }
 
 
@@ -100,7 +106,7 @@ uint8_t initializeTempSensor(TempSensor sensor) {
 float readTemperature(TempSensor sensor) {
 	TM_OneWire_t* tempSensor;
 	uint8_t* sensorROM;
-	float* temp = 0;
+	float* temp;
 
 	uint8_t initialized = 0;
 
@@ -121,13 +127,19 @@ float readTemperature(TempSensor sensor) {
 	/* Start temperature conversion on all devices on one bus */
 	TM_DS18B20_StartAll(tempSensor);
 
+	uint32_t breakoutTime = 50000;
+
 	/* Wait until all are done on one onewire port */
-	while (!TM_DS18B20_AllDone(tempSensor));
+	while (!TM_DS18B20_AllDone(tempSensor)) {
+		breakoutTime = breakoutTime - 1;
+
+		if(breakoutTime <= 0) return 0;
+	}
 
 	/* Read temperature from ROM address and store it to temps variable */
 	if (!TM_DS18B20_Read(tempSensor, sensorROM, temp)) return 0;
 
-	return *temp;
+	return (*temp);
 }
 
 /**
