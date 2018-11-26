@@ -51,3 +51,13 @@ float readDistance() {
 uint8_t isWaterHeightBelowMin() {
 	return readDistance() < MinimumWaterHeight;
 }
+
+/**
+ * Delays the code until the water height has changed by the appropriate amount.
+ *
+ * Returns 1 if no timeout occurred.
+ * Returns 0 if there was a timeout.
+ */
+uint8_t delayUntilChangeInOunces(uint8_t liquidAmount) {
+	return 1;
+}

@@ -24,3 +24,5 @@ uint8_t initializeSonarSensor();
 float readDistance();
 
 uint8_t isWaterHeightBelowMin();
+
+uint8_t delayUntilChangeInOunces(uint8_t liquidAmount);

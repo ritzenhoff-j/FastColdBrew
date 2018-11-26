@@ -10,16 +10,6 @@
 #include FCB_TEMP_SENSOR
 #endif
 
-#ifndef FCB_GPIO_PINS
-#define FCB_GPIO_PINS "FCB_GPIO_Pins.h"
-#include FCB_GPIO_PINS
-#endif
-
-#ifndef TM_ONEWIRE
-#define TM_ONEWIRE "tm_stm32f4_onewire.h"
-#include TM_ONEWIRE
-#endif
-
 #ifndef TM_DS18B20
 #define TM_DS18B20 "tm_stm32f4_ds18b20.h"
 #include TM_DS18B20
