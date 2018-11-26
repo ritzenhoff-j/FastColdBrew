@@ -38,28 +38,44 @@
 #include FCB_SONAR_SENSER
 #endif
 
+#ifndef FCB_PRESSURE_SENSOR
+#define FCB_PRESSURE_SENSOR "FCB_PressureSensor.h"
+#include FCB_PRESSURE_SENSOR
+#endif
+
 #ifndef TM_DELAY
 #define TM_DELAY "tm_stm32f4_delay.h"
 #include TM_DELAY
 #endif
 
+#ifndef FCB_TESTS_REALTIME
+#define FCB_TESTS_REALTIME "FCB_Tests_RealTime.h"
+#include FCB_TESTS_REALTIME
+#endif
+
 
 void SysTickInit(uint16_t frequency);
 
-
-void testFlashingLight();
-void testButtonFlashingLight();
-
-
 void coolWaterTank();
+uint8_t getSizeInput();
+void fillVacuumChamber(uint8_t ozToFill);
+void createVacuum();
+void brewCoffee(uint8_t ozSize);
+void releaseVacuum();
+void emptyVacuumChamber(uint8_t ozSize);
+
+
 void setSolenoidsForRecirc();
-void setSolenoidsForPumping();
+void setSolenoidsForFilling();
 
 void initializeAll_Peripherals();
 
 enum ColdBrewState {
+	WAITING,
 	COOLING,
+	WAITING_FOR_SIZE,
 	FILLING_VACUUM_CHAMBER,
+	CREATING_VACUUM,
 	RELEASING_VACUUM,
 	BREWING,
 	EMPTYING_VACUUM_CHAMBER
@@ -79,43 +95,8 @@ int main(void) {
 	// Initialize all PWM pins
 	initializePWM();
 
-
-	// run PWM test
-	int l = 0;
-	int brightness = 0;
-	int increment = 5;
-
-	while (1) {
-		for (int i = 0; i < 20; i++) {
-
-			for(int j = 0; j < 50000; j++) { l = j; }
-
-			setPWM(PWM_VacuumPump.timerIndex, PWM_VacuumPump.channel, brightness);
-
-			brightness += increment;
-		}
-
-		increment = -increment;
-	}
-
-
-
-
-
-
 	// Initialize all Peripheral Sensors (Temp, Sonar)
 	initializeAll_Peripherals();
-
-
-	float temperature = 0;
-	float distance = 0;
-
-	while(1) {
-		temperature = readTemperature(WaterTank);
-		distance = readDistance();
-	}
-
-
 
 
 	// testFlashingLight();
@@ -124,102 +105,44 @@ int main(void) {
 	// The machine always starts by cooling
 	machineState = COOLING;
 
-	while(1) {
-		GPIO_ResetBits(CoolingOnLED.port, CoolingOnLED.pin);
-		GPIO_ResetBits(BrewMin1LED.port, BrewMin1LED.pin);
 
+	// turn off ALL outputs
+
+	uint8_t brewSize = 0;
+
+	while(1) {
 		switch(machineState) {
 		case COOLING:
-
-			GPIO_SetBits(CoolingOnLED.port, CoolingOnLED.pin);
-
 			coolWaterTank();
 			break;
 
-		case FILLING_VACUUM_CHAMBER:
-
+		case WAITING_FOR_SIZE:
+			brewSize = getSizeInput();
 			break;
 
-		case RELEASING_VACUUM:
+		case FILLING_VACUUM_CHAMBER:
+			fillVacuumChamber(brewSize);
+			break;
 
+		case CREATING_VACUUM:
+			createVacuum();
 			break;
 
 		case BREWING:
+			brewCoffee(brewSize);
+			break;
 
+		case RELEASING_VACUUM:
+			releaseVacuum();
 			break;
 
 		case EMPTYING_VACUUM_CHAMBER:
+			emptyVacuumChamber(brewSize);
+
 			break;
 		}
 	}
 }
-
-
-void coolWaterTank() {
-
-	while(1) {
-
-		//		/* Wait until all are done on one onewire port */
-		//		// while (!TM_DS18B20_AllDone(&OneWire));
-		//
-		//		/* Read temperature from each device separatelly */
-		//		for (i = 0; i < count; i++)
-		//		{
-		//			/* Read temperature from ROM address and store it to temps variable */
-		//			if (TM_DS18B20_Read(&OneWire, device[i], &temps[i]))
-		//			{
-
-
-		// check the value of the WATER temperature...
-		// if below a certain range...
-
-		// Make sure that the solenoids are prepped for recirculation
-		setSolenoidsForRecirc();
-
-		// Turn on the Peltiers AND the fans
-		GPIO_SetBits(PeltierSwitch.port, PeltierSwitch.pin);
-
-		// Turn on the Recirculation Motor
-		// GPIO_SetBits(RecircPump.port, RecircPump.pin);
-
-
-		// declare a variable used if a button has been pressed...
-		uint8_t buttonPressed = 0;
-
-		while(1) {
-
-
-			// Read temperature 2.0...
-			// Should make that into a helper function...
-
-			// If the temperature raises above a certain height...
-			//		break;
-
-			// If a button is pressed...
-			//      buttonPressed = 1;
-		}
-
-
-		// Turn off the recirc motor
-		// GPIO_ResetBits(RecircPump.port, RecircPump.pin);
-
-		// Turn off the cooling
-		GPIO_ResetBits(PeltierSwitch.port, PeltierSwitch.pin);
-
-		// If a button was pressed... Exit the loop as the water has been cooled to the appropriate temperature...
-		// Else just keep looping through the while loop checking if the temperature has risen
-
-		//			}
-		//	        else {
-		//				// there was an error... Troubleshoot
-		//			}
-		//
-		//		}
-	}
-
-	machineState = FILLING_VACUUM_CHAMBER;
-}
-
 
 void SysTickInit (uint16_t frequency)
 {
@@ -229,64 +152,229 @@ void SysTickInit (uint16_t frequency)
 }
 
 
+/**
+ * Cools the water chamber below its hardcoded threshold by turning on Peltiers.
+ */
+void coolWaterTank() {
 
+	uint8_t lowWaterState = 0 ;
 
+	while(!isTemperatureBelowMax(WaterTank) || isWaterHeightBelowMin()) {
 
-
-
-void testFlashingLight() {
-	uint8_t bool = 0;
-
-	while(1) {
-		if(bool) {
-			GPIO_ResetBits(LowWaterLED.port, LowWaterLED.pin);
-
-			bool = 0;
-		}
-		else {
-			GPIO_SetBits(LowWaterLED.port, LowWaterLED.pin);
-
-			bool = 1;
-		}
-
-		int j = 0;
-
-		for(int i = 0; i < 5000000; i++) {
-			j++;
-		}
-	}
-}
-
-
-void testButtonFlashingLight() {
-	uint8_t bool = 0;
-	uint8_t prev = 0;
-
-	int maxCount = 5000000;
-
-	int j = 0;
-
-	while(1) {
-
-		if(GPIO_ReadInputDataBit(SmallButton.port, SmallButton.pin)) {
-			bool = 1;
-		}
-		else {
-			bool = 0;
-		}
-
-		if(prev != bool) {
-			if(bool) {
+		if(isWaterHeightBelowMin()) {
+			if(lowWaterState) {
+				// turn ON low water level indicator LED
 				GPIO_SetBits(LowWaterLED.port, LowWaterLED.pin);
 			}
 			else {
+				// turn OFF low water level indicator LED
 				GPIO_ResetBits(LowWaterLED.port, LowWaterLED.pin);
 			}
 
-			prev = bool;
+			// this creates a blinking of the light
+			lowWaterState = ~lowWaterState;
 		}
+		else {
+			// turn OFF low water level indicator LED
+			GPIO_ResetBits(LowWaterLED.port, LowWaterLED.pin);
+
+
+			// turn ON the cooling indicator LED
+			GPIO_SetBits(CoolingOnLED.port, CoolingOnLED.pin);
+
+			// turn ON the Peltiers
+			GPIO_SetBits(PeltierSwitch.port, PeltierSwitch.pin);
+
+			// turn ON the Peltiers cooling fan
+			setPWM(PWM_PeltierCoolingFan.timerIndex, PWM_PeltierCoolingFan.channel, 100.0);
+
+
+
+			// set the Solenoids for recirculation
+			setSolenoidsForRecirc();
+
+			// turn ON the recirculation pump
+			setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 50);
+		}
+
+		// delay for a short period of time (from TM library)
+		Delayms(500);
+
+		// want to make sure that the peltiers are not constantly being turned on and off
+		// - Idealy only switches state if there have been numerous readings in the opposite state
 	}
+
+	// turn OFF the cooling indicator LED
+	GPIO_ResetBits(CoolingOnLED.port, CoolingOnLED.pin);
+
+	// turn OFF the Peltiers
+	GPIO_ResetBits(PeltierSwitch.port, PeltierSwitch.pin);
+
+	// turn OFF the Peltiers cooling fan
+	setPWM(PWM_PeltierCoolingFan.timerIndex, PWM_PeltierCoolingFan.channel, 0);
+
+	// turn OFF cooling indicator LED
+	GPIO_ResetBits(CoolingOnLED.port, CoolingOnLED.pin);
+
+	// turn OFF the recirculation pump
+	setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 0);
+
+	machineState = WAITING_FOR_SIZE;
 }
+
+/**
+ * Returns the size of the coffee to be brewed in ounces.
+ *
+ * NOTE: Only sizes offered are 8, 10, 12oz
+ */
+uint8_t getSizeInput() {
+
+	uint8_t size = 0;
+
+	while(size == 0) {
+
+		if(GPIO_ReadInputDataBit(SmallButton.port, SmallButton.pin)) {
+			size = 8;
+
+			break;
+		}
+
+		if(GPIO_ReadInputDataBit(MediumButton.port, MediumButton.pin)) {
+			size = 10;
+
+			break;
+		}
+
+		if(GPIO_ReadInputDataBit(LargeButton.port, LargeButton.pin)) {
+			size = 12;
+
+			break;
+		}
+
+		// delay for 500 ms
+		Delayms(500);
+	}
+
+
+	machineState = FILLING_VACUUM_CHAMBER;
+
+	return size;
+}
+
+/**
+ * Turns on the appropriate pins and delays the code until the vacuum chamber has been filled.
+ */
+void fillVacuumChamber(uint8_t ozToFill) {
+
+	// set the solenoids for filling the water tank
+	setSolenoidsForFilling();
+
+	// turn ON the water pump
+	setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 50);
+
+	// delay until the water pump has been filled
+	if(!delayUntilChangeInOunces(ozToFill)) {
+		// there was a timeout
+	}
+
+	machineState = CREATING_VACUUM;
+}
+
+/**
+ * Turns on the appropriate pins and delays the code until vacuum has been achieved.
+ */
+void createVacuum() {
+	// turn on the vacuum pumps
+	setPWM(PWM_VacuumPump.timerIndex, PWM_VacuumPump.channel, 100);
+
+	if(!delayUntilPressureBelowMax()) {
+		// timed out
+	}
+
+	// turn ON pressure on indicator LED
+	GPIO_SetBits(PressureOnLED.port, PressureOnLED.pin);
+
+	machineState = BREWING;
+}
+
+/**
+ * Turns on the mixing motor, controls vacuum pressure, and delays code for set amount of time.
+ */
+void brewCoffee(uint8_t ozSize) {
+	// turn on mixing motor
+	setPWM(PWM_MixingMotor.timerIndex, PWM_MixingMotor.channel, 100);
+
+	// ?? turn OFF vacuum pumps
+
+
+	uint32_t oneMinute = 60 * 1000;
+
+	// delay for one miute
+	Delayms(oneMinute);
+	// turn on appropriate indicator LED
+	GPIO_SetBits(BrewMin1LED.port, BrewMin1LED.pin);
+
+	// delay for another minute
+	Delayms(oneMinute);
+	// turn on appropriate indicator LED
+	GPIO_SetBits(BrewMin2LED.port, BrewMin2LED.pin);
+
+	// delay for another minute
+	Delayms(oneMinute);
+	// turn on appropriate indicator LED
+	GPIO_SetBits(BrewMin3LED.port, BrewMin3LED.pin);
+
+
+
+	// turn OFF vacuum pumps
+	setPWM(PWM_VacuumPump.timerIndex, PWM_VacuumPump.channel, 0);
+
+	// turn OFF mixing motor
+	setPWM(PWM_MixingMotor.timerIndex, PWM_MixingMotor.channel, 0);
+
+	machineState = RELEASING_VACUUM;
+}
+
+/**
+ * Releases the vacuum and waits until the pressure rises above a given level.
+ */
+void releaseVacuum() {
+	// release the pressure itself
+	GPIO_SetBits(PressureReleaseSol.port, PressureReleaseSol.pin);
+
+	// delay until the pressure has reached normal levels
+	if(!delayUntilPressureAtRoom()) {
+		// delay timed out
+	}
+
+	// turn OFF pressure on indicator LED
+	GPIO_ResetBits(PressureOnLED.port, PressureOnLED.pin);
+
+	machineState = EMPTYING_VACUUM_CHAMBER;
+}
+
+/**
+ * Empties the vacuum chamber for a given amount of time.
+ */
+void emptyVacuumChamber(uint8_t ozSize) {
+	// open the vacuum chamber release (pressure release should still be open)
+	GPIO_SetBits(CoffeeReleaseSol.port, CoffeeReleaseSol.pin);
+
+	int timeToEmpty = 30 * 1000;
+
+	Delayms(timeToEmpty);
+
+	// close the pressure release
+	GPIO_ResetBits(CoffeeReleaseSol.port, CoffeeReleaseSol.pin);
+
+	// close the vacuum chamber release
+	GPIO_ResetBits(PressureReleaseSol.port, PressureReleaseSol.pin);
+
+	machineState = COOLING;
+
+}
+
+
 
 /**
  * Initialize all peripherals of the Fast Cold Brew Machine
@@ -300,16 +388,12 @@ void initializeAll_Peripherals() {
 }
 
 
-
-
-
-
 void setSolenoidsForRecirc() {
 	GPIO_ResetBits(ToVacChamberSol.port, ToVacChamberSol.pin);
 	GPIO_SetBits(RecircSol.port, RecircSol.pin);
 }
 
-void setSolenoidsForPumping() {
+void setSolenoidsForFilling() {
 	GPIO_SetBits(ToVacChamberSol.port, ToVacChamberSol.pin);
 	GPIO_ResetBits(RecircSol.port, RecircSol.pin);
 }
