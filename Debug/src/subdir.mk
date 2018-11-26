@@ -7,8 +7,10 @@ C_SRCS += \
 ../src/FCB_GPIO_Init.c \
 ../src/FCB_GPIO_Pins.c \
 ../src/FCB_PWM.c \
+../src/FCB_PressureSensor.c \
 ../src/FCB_SonarSensor.c \
 ../src/FCB_TempSensor.c \
+../src/FCB_Tests_RealTime.c \
 ../src/main.c \
 ../src/syscalls.c \
 ../src/system_stm32f4xx.c 
@@ -17,8 +19,10 @@ OBJS += \
 ./src/FCB_GPIO_Init.o \
 ./src/FCB_GPIO_Pins.o \
 ./src/FCB_PWM.o \
+./src/FCB_PressureSensor.o \
 ./src/FCB_SonarSensor.o \
 ./src/FCB_TempSensor.o \
+./src/FCB_Tests_RealTime.o \
 ./src/main.o \
 ./src/syscalls.o \
 ./src/system_stm32f4xx.o 
@@ -27,8 +31,10 @@ C_DEPS += \
 ./src/FCB_GPIO_Init.d \
 ./src/FCB_GPIO_Pins.d \
 ./src/FCB_PWM.d \
+./src/FCB_PressureSensor.d \
 ./src/FCB_SonarSensor.d \
 ./src/FCB_TempSensor.d \
+./src/FCB_Tests_RealTime.d \
 ./src/main.d \
 ./src/syscalls.d \
 ./src/system_stm32f4xx.d 
