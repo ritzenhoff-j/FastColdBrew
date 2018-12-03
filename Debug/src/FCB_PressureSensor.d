@@ -26,7 +26,14 @@ src/FCB_PressureSensor.o: ../src/FCB_PressureSensor.c \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_wwdg.h \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/misc.h \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_flash_ramfunc.h \
- ../src/FCB_PressureSensor.h
+ ../src/FCB_PressureSensor.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_adc.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_rcc.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_gpio.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_adc.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/defines.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_gpio.h \
+ ../src/FCB_GPIO_Pins.h
 
 C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/CMSIS/device/stm32f4xx.h:
 
@@ -83,3 +90,17 @@ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/mi
 C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_flash_ramfunc.h:
 
 ../src/FCB_PressureSensor.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_adc.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_rcc.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_gpio.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_adc.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/defines.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_gpio.h:
+
+../src/FCB_GPIO_Pins.h:

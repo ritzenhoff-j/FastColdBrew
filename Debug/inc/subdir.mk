@@ -4,6 +4,7 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../inc/tm_stm32f4_adc.c \
 ../inc/tm_stm32f4_delay.c \
 ../inc/tm_stm32f4_ds18b20.c \
 ../inc/tm_stm32f4_gpio.c \
@@ -13,6 +14,7 @@ C_SRCS += \
 ../inc/tm_stm32f4_timer_properties.c 
 
 OBJS += \
+./inc/tm_stm32f4_adc.o \
 ./inc/tm_stm32f4_delay.o \
 ./inc/tm_stm32f4_ds18b20.o \
 ./inc/tm_stm32f4_gpio.o \
@@ -22,6 +24,7 @@ OBJS += \
 ./inc/tm_stm32f4_timer_properties.o 
 
 C_DEPS += \
+./inc/tm_stm32f4_adc.d \
 ./inc/tm_stm32f4_delay.d \
 ./inc/tm_stm32f4_ds18b20.d \
 ./inc/tm_stm32f4_gpio.d \

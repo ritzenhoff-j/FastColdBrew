@@ -27,13 +27,15 @@ src/FCB_TempSensor.o: ../src/FCB_TempSensor.c ../src/FCB_TempSensor.h \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_wwdg.h \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/misc.h \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_flash_ramfunc.h \
- C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_onewire.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_adc.h \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_rcc.h \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_gpio.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_adc.h \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/defines.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_gpio.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_onewire.h \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_delay.h \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/attributes.h \
- C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_gpio.h \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_ds18b20.h \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_onewire.h \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_delay.h
@@ -96,19 +98,23 @@ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/mi
 
 C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_flash_ramfunc.h:
 
-C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_onewire.h:
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_adc.h:
 
 C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_rcc.h:
 
 C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_gpio.h:
 
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_adc.h:
+
 C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/defines.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_gpio.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_onewire.h:
 
 C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_delay.h:
 
 C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/attributes.h:
-
-C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_gpio.h:
 
 C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_ds18b20.h:
 

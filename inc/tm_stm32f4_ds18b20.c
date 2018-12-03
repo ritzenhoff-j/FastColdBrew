@@ -139,7 +139,7 @@ uint8_t TM_DS18B20_Read(TM_OneWire_t* OneWire, uint8_t *ROM, float *destination)
 	
 	/* Set to pointer */
 	*destination = decimal;
-	
+
 	/* Return 1, temperature valid */
 	return 1;
 }

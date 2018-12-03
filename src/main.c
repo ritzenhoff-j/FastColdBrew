@@ -89,25 +89,28 @@ int main(void) {
 	// initialize the tick
 	SysTickInit(1000);
 
-	// Initialize all GPIO pins
+	// Initialize all GPIO pins ** AND TM_DELAY **
 	initializeAll_IOPins();
 
 	// Initialize all PWM pins
 	initializePWM();
 
+	// testFlashingLight();
+	// testButtonFlashingLight();
+	//testPWM();
+	//testADC();
+
+	testAllLEDs();
+
 	// Initialize all Peripheral Sensors (Temp, Sonar)
 	initializeAll_Peripherals();
 
-
-	// testFlashingLight();
-	testButtonFlashingLight();
+	// testTempAndSonar();
 
 	// The machine always starts by cooling
 	machineState = COOLING;
 
-
 	// turn off ALL outputs
-
 	uint8_t brewSize = 0;
 
 	while(1) {
@@ -377,14 +380,16 @@ void emptyVacuumChamber(uint8_t ozSize) {
 
 
 /**
- * Initialize all peripherals of the Fast Cold Brew Machine
+ * Initialize all peripherals of the Fast Cold Brew Machine.
+ *
+ * Initializes TM Delay.
  */
 void initializeAll_Peripherals() {
 	TM_DELAY_Init();
 
 	initializeAllTempSensors();
 
-	initializeSonarSensor();
+	// initializeSonarSensor();
 }
 
 
