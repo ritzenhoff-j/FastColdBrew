@@ -12,3 +12,5 @@ void initializeGPIO(GPIO_TypeDef* GPIOx, uint16_t numberOfPins, PinLocation loca
 		GPIOSpeed_TypeDef speed, GPIOMode_TypeDef mode, GPIOOType_TypeDef type, GPIOPuPd_TypeDef pushPull);
 
 void initializeTimerPort(GPIO_TypeDef* GPIOx, uint16_t numberOfPossiblePins, PWM_PinLocation locations[]);
+
+void initializeADC_1(uint16_t numberOfPins, ADC_PinLocation locations[]);

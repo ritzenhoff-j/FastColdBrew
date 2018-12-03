@@ -20,6 +20,11 @@
 #include FCB_GPIO_INIT
 #endif
 
+#ifndef TM_ADC
+#define TM_ADC "tm_stm32f4_adc.h"
+#include TM_ADC
+#endif
+
 
 /**
  * An initialization of all Pins based on PinLocation input and output arrays.
@@ -37,6 +42,9 @@ void initializeAll_IOPins() {
 
 		initializeTimerPort(currentPort, NUMBER_OF_PWM_PINS, *pwmPins);
 	}
+
+
+	initializeADC_1(NUMBER_OF_ADC_PINS, *adcPins);
 }
 void initializeGPIO(GPIO_TypeDef* GPIOx, uint16_t numberOfPins, PinLocation locations[],
 		GPIOSpeed_TypeDef speed, GPIOMode_TypeDef mode,
@@ -88,4 +96,12 @@ void initializeTimerPort(GPIO_TypeDef* GPIOx, uint16_t numberOfPossiblePins, PWM
 	}
 
 	GPIO_Init(getPort(GPIOx), &currentPort_InitStruct); // do the init
+}
+
+void initializeADC_1(uint16_t numberOfPins, ADC_PinLocation locations[]) {
+	for(uint16_t i = 0; i < numberOfPins; i++) {
+		ADC_PinLocation currentADCIO = locations[i];
+
+		TM_ADC_Init(ADC1, currentADCIO.channel);
+	}
 }
