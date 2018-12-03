@@ -12,3 +12,6 @@ void testPWM();
 
 void testTempAndSonar();
 
+void testADC();
+
+void testAllLEDs();
