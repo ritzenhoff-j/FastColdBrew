@@ -96,7 +96,8 @@ uint8_t initializeTempSensor(TempSensor sensor) {
 float readTemperature(TempSensor sensor) {
 	TM_OneWire_t* tempSensor;
 	uint8_t* sensorROM;
-	float* temp;
+	float temp = 0;
+	float* tempPointer = &temp;
 
 	uint8_t initialized = 0;
 
@@ -127,9 +128,9 @@ float readTemperature(TempSensor sensor) {
 	}
 
 	/* Read temperature from ROM address and store it to temps variable */
-	if (!TM_DS18B20_Read(tempSensor, sensorROM, temp)) return 0;
+	if (!TM_DS18B20_Read(tempSensor, sensorROM, tempPointer)) return 0;
 
-	return (*temp);
+	return (*tempPointer);
 }
 
 /**
