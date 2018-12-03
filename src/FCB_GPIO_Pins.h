@@ -3,6 +3,10 @@
 #include STM_STD_LIB
 #endif
 
+#ifndef TM_ADC
+#define TM_ADC "tm_stm32f4_adc.h"
+#include TM_ADC
+#endif
 
 
 // Discussion of static const int, #define, and enum
@@ -24,6 +28,11 @@ typedef struct {
 	uint8_t channel;
 } PWM_PinLocation;
 
+typedef struct {
+	PinLocation* location;
+	TM_ADC_Channel_t channel;
+} ADC_PinLocation;
+
 
 // static const PinLocation SWDIO = { GPIOA, GPIO_Pin_13 };
 // static const PinLocation SWCLK = { GPIOA, GPIO_Pin_14 };
@@ -43,18 +52,19 @@ static const PWM_PinLocation PWM_MixingMotor = { &MixingMotorPin, 1, 1 };
 static const PWM_PinLocation PWM_PeltierCoolingFan = { &PeltierCoolingFanPin, 4, 1 };
 
 
-
 static const PinLocation RecircSol = { GPIOA, GPIO_Pin_7 };
 static const PinLocation ToVacChamberSol = { GPIOA, GPIO_Pin_9 };
 static const PinLocation PressureReleaseSol = { GPIOA, GPIO_Pin_10 };
 static const PinLocation CoffeeReleaseSol = { GPIOA, GPIO_Pin_11 };
 
-static const PinLocation SonarSensorTrigger = { GPIOB, GPIO_Pin_0 };
-static const PinLocation SonarSensorEcho = { GPIOB, GPIO_Pin_1 };
-static const PinLocation WaterTempSensor = { GPIOB, GPIO_Pin_2 };
-static const PinLocation PeltierTempSensor = { GPIOB, GPIO_Pin_3 };
-static const PinLocation PressureSensor = { GPIOB, GPIO_Pin_4 };
+static const PinLocation PressureSensor = { GPIOB, GPIO_Pin_0 };
+static const PinLocation WaterTempSensor = { GPIOB, GPIO_Pin_1 };
+static const PinLocation PeltierTempSensor = { GPIOB, GPIO_Pin_2 };
+static const PinLocation SonarSensorTrigger = { GPIOB, GPIO_Pin_3 };
+static const PinLocation SonarSensorEcho = { GPIOB, GPIO_Pin_4 };
 static const PinLocation PeltierSwitch = { GPIOB, GPIO_Pin_5 };
+
+static const ADC_PinLocation ADC_PressureSensor = { &PressureSensor, TM_ADC_Channel_8 };
 
 static const PinLocation SmallButton = { GPIOB, GPIO_Pin_12 };
 static const PinLocation MediumButton = { GPIOB, GPIO_Pin_13 };
@@ -96,10 +106,6 @@ static const PinLocation *inputPins[NUMBER_OF_INPUT_PINS] = {
 		&SmallButton, &MediumButton, &LargeButton, &CancelButton,
 		&RxPin };
 
-// Array of all ports utilized for GPIO initialization
-#define NUMBER_OF_PORTS ((int) 3)
-static const GPIO_TypeDef * knownUsedPorts[NUMBER_OF_PORTS] = { GPIOA, GPIOB, GPIOC };
-
 #define NUMBER_OF_PWM_PINS ((int)4)
 static const PWM_PinLocation *pwmPins[NUMBER_OF_PWM_PINS] = {
 		&PWM_VacuumPump,
@@ -107,6 +113,15 @@ static const PWM_PinLocation *pwmPins[NUMBER_OF_PWM_PINS] = {
 		&PWM_MixingMotor,
 		&PWM_PeltierCoolingFan
 };
+
+#define NUMBER_OF_ADC_PINS ((int)1)
+static const ADC_PinLocation *adcPins[NUMBER_OF_ADC_PINS] = {
+		&ADC_PressureSensor
+};
+
+// Array of all ports utilized for GPIO initialization
+#define NUMBER_OF_PORTS ((int) 3)
+static const GPIO_TypeDef * knownUsedPorts[NUMBER_OF_PORTS] = { GPIOA, GPIOB, GPIOC };
 
 
 // Array of all ports utilized for GPIO initialization
