@@ -12,8 +12,6 @@
  */
 static const float MaxAllowedPressure = -16;
 
-uint8_t initializePressureSensor();
-
 float readPressure();
 
 uint8_t isPressureBelowMax();
