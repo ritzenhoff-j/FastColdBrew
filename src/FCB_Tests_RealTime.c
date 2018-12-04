@@ -52,20 +52,28 @@
 #include FCB_TESTS_REALTIME
 #endif
 
+void testPortValues() {
+	GPIO_TypeDef* aDef = GPIOA;
+	uint32_t aInt = GPIOA;
+
+	uint8_t aEqual = 0;
+
+	GPIO_TypeDef* aFrom = VacuumPumpPin.port;
+	uint32_t aIntFrom = VacuumPumpPin.port;
+
+	PinLocation locA = *outputPins[0];
+
+	GPIO_TypeDef* aFromArray = locA.port;
+	uint32_t aIntFromArray = locA.port;
+
+}
+
 void testFlashingLight() {
 	uint8_t bool = 0;
 
 	while(1) {
-		if(bool) {
-			GPIO_ResetBits(LowWaterLED.port, LowWaterLED.pin);
 
-			bool = 0;
-		}
-		else {
-			GPIO_SetBits(LowWaterLED.port, LowWaterLED.pin);
-
-			bool = 1;
-		}
+		GPIO_ToggleBits(LowWaterLED.port, LowWaterLED.pin);
 
 		int j = 0;
 
@@ -100,8 +108,11 @@ void testPWM() {
 
 
 void testButtonFlashingLight() {
-	uint8_t bool = 0;
-	uint8_t prev = 0;
+	uint8_t small = 0;
+	uint8_t prevSmall = 0;
+
+	uint8_t medium = 0;
+	uint8_t prevMed = 0;
 
 	int maxCount = 5000000;
 
@@ -110,21 +121,39 @@ void testButtonFlashingLight() {
 	while(1) {
 
 		if(GPIO_ReadInputDataBit(SmallButton.port, SmallButton.pin)) {
-			bool = 1;
+			small = 1;
 		}
 		else {
-			bool = 0;
+			small = 0;
 		}
 
-		if(prev != bool) {
-			if(bool) {
+		if(GPIO_ReadInputDataBit(MediumButton.port, MediumButton.pin)) {
+			medium = 1;
+		}
+		else {
+			medium = 0;
+		}
+
+		if(prevSmall != small) {
+			if(small) {
 				GPIO_SetBits(LowWaterLED.port, LowWaterLED.pin);
 			}
 			else {
 				GPIO_ResetBits(LowWaterLED.port, LowWaterLED.pin);
 			}
 
-			prev = bool;
+			prevSmall = small;
+		}
+
+		if(prevMed != medium) {
+			if(medium) {
+				GPIO_SetBits(BrewMin1LED.port, BrewMin1LED.pin);
+			}
+			else {
+				GPIO_ResetBits(BrewMin1LED.port, BrewMin1LED.pin);
+			}
+
+			prevMed = medium;
 		}
 	}
 }
@@ -152,6 +181,12 @@ void testADC() {
 void testAllLEDs() {
 
 	uint8_t counter = 0;
+
+	// Turn off all size LEDs
+//	GPIO_SetBits(LowWaterLED.port, LowWaterLED.pin)
+//	GPIO_SetBits(SmallButtonLED.port, SmallButtonLED.pin | MediumButtonLED.pin | LargeButtonLED.pin);
+//	GPIO_SetBits(BrewMin1LED.port, BrewMin1LED.pin | BrewMin2LED.pin | BrewMin3LED.pin);
+
 
 	// blink Low Water (for 5 seconds)
 	while(1) {

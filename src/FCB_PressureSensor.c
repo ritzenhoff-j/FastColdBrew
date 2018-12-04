@@ -42,25 +42,11 @@ float readPressure() {
 	// This number should be in the range of 0 to 5V
 	uint16_t analogInput = TM_ADC_Read(ADC1, ADC_PressureSensor.channel);
 
-//	char bits[12];
-//
-//	for(int bit = 0; bit < 12; bit++) {
-//		bits[bit] = (analogInput >> bit) & 0x1;// flippedInput |= (analogInput >> bit) | (analogInput << (32 - bit));
-//	}
-
-//	char flippedBits[12];
-//
-//	for(int bit = 0; bit < 12; bit++) {
-//		flippedBits[bit] |= (flippedInput >> bit) & 0x1;
-//	}
-
-
-
 	// ADC is 12-bit... Input is scaled from 0 -> { Max = 2^(12) = 4096 }
-	float voltage = ((float) analogInput) * ( 3.3 / 4096.0);
+	float voltage = ((float) analogInput) * ( vSource / 4096.0);
 
 	float finalPressureNumerator = (voltage / vSource) - conversionSubstractionConst;
-	float finalPressureDenominator = (conversionDivisorConst); //* kpaInAPsi);
+	float finalPressureDenominator = (conversionDivisorConst * kpaInAPsi);
 
 	float finalPressure = finalPressureNumerator / finalPressureDenominator;
 

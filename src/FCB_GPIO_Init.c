@@ -31,30 +31,30 @@
  */
 void initializeAll_IOPins() {
 	for(uint8_t portIndex = 0; portIndex < NUMBER_OF_PORTS; portIndex++) {
-
 		GPIO_TypeDef* currentPort = knownUsedPorts[portIndex];
 
-		initializeGPIO(currentPort, NUMBER_OF_OUTPUT_PINS, *outputPins,
-						GPIO_Speed_50MHz, GPIO_Mode_OUT, GPIO_OType_PP, GPIO_PuPd_NOPULL);
+		// GPIO_DeInit(currentPort);
+
+		// Initialize the associated Port clock on the board
+		uint32_t RCC_AHBPeriph = getPortRCC_Constant(currentPort);
+		RCC_AHB1PeriphClockCmd(RCC_AHBPeriph, ENABLE);
 
 		initializeGPIO(currentPort, NUMBER_OF_INPUT_PINS, *inputPins,
 				GPIO_Speed_50MHz, GPIO_Mode_IN, GPIO_OType_PP, GPIO_PuPd_DOWN);
 
-		initializeTimerPort(currentPort, NUMBER_OF_PWM_PINS, *pwmPins);
+		initializeGPIO(currentPort, NUMBER_OF_OUTPUT_PINS, *outputPins,
+						GPIO_Speed_50MHz, GPIO_Mode_OUT, GPIO_OType_PP, GPIO_PuPd_NOPULL);
+
+		 initializeTimerPort(currentPort, NUMBER_OF_PWM_PINS, *pwmPins);
 	}
 
 
-	initializeADC_1(NUMBER_OF_ADC_PINS, *adcPins);
+	 initializeADC_1(NUMBER_OF_ADC_PINS, *adcPins);
 }
+
 void initializeGPIO(GPIO_TypeDef* GPIOx, uint16_t numberOfPins, PinLocation locations[],
 		GPIOSpeed_TypeDef speed, GPIOMode_TypeDef mode,
 		GPIOOType_TypeDef otype, GPIOPuPd_TypeDef pushPull) {
-
-	// Initialize the clock on the board
-	uint32_t RCC_AHBPeriph = getPortRCC_Constant(GPIOx);
-	RCC_AHB1PeriphClockCmd(RCC_AHBPeriph, ENABLE);
-
-
 	GPIO_InitTypeDef currentPort_InitStruct;
 
 	currentPort_InitStruct.GPIO_Speed = speed; // 50 MHZ clock frequency
@@ -62,16 +62,22 @@ void initializeGPIO(GPIO_TypeDef* GPIOx, uint16_t numberOfPins, PinLocation loca
 	currentPort_InitStruct.GPIO_OType = otype; // Push pull mod
 	currentPort_InitStruct.GPIO_PuPd = pushPull; // Pull up
 
-	for(uint16_t pinIndex = 0; pinIndex < numberOfPins; pinIndex++) {
-		PinLocation currentIO = locations[pinIndex];
+	PinLocation currentIO;
+	uint16_t currentPin;
 
-		if(sameGPIO_TypeDef(currentIO.port, GPIOx)) {
+	for(uint16_t pinIndex = 0; pinIndex < numberOfPins; pinIndex++) {
+		currentIO = locations[pinIndex];
+
+		currentPin = currentIO.pin;
+
+		if(currentIO.port == GPIOx) {
 			// This takes in a binary number... To use multiple LED's one needs to use a Bitwise OR operator
-			currentPort_InitStruct.GPIO_Pin |= currentIO.pin;
+			currentPort_InitStruct.GPIO_Pin |= currentPin;
 		}
 	}
 
 	GPIO_Init(getPort(GPIOx), &currentPort_InitStruct); // do the init
+	// GPIO_Init(GPIOx, &currentPort_InitStruct); // do the init
 }
 
 

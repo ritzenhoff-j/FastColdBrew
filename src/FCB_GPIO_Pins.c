@@ -15,15 +15,12 @@
 #include FCB_GPIO_PINS
 #endif
 
-
 uint32_t getPortRCC_Constant(GPIO_TypeDef * GPIOx) {
-	GPIO_TypeDef* port = getPort(GPIOx);
-
-	if(port == GPIOA) return RCC_AHB1Periph_GPIOA;
-	if(port == GPIOB) return RCC_AHB1Periph_GPIOB;
-	if(port == GPIOC) return RCC_AHB1Periph_GPIOC;
-	if(port == GPIOD) return RCC_AHB1Periph_GPIOD;
-	if(port == GPIOE) return RCC_AHB1Periph_GPIOE;
+	if(GPIOx == GPIOA) return RCC_AHB1Periph_GPIOA;
+	if(GPIOx == GPIOB) return RCC_AHB1Periph_GPIOB;
+	if(GPIOx == GPIOC) return RCC_AHB1Periph_GPIOC;
+	if(GPIOx == GPIOD) return RCC_AHB1Periph_GPIOD;
+	if(GPIOx == GPIOE) return RCC_AHB1Periph_GPIOE;
 //	if(sameGPIO_TypeDef(&GPIOx, GPIOF)) return RCC_AHB1Periph_GPIOF;
 //	if(sameGPIO_TypeDef(&GPIOx, GPIOG)) return RCC_AHB1Periph_GPIOG;
 //	if(sameGPIO_TypeDef(&GPIOx, GPIOH)) return RCC_AHB1Periph_GPIOH;

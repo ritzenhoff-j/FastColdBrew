@@ -59,5 +59,14 @@ uint8_t isWaterHeightBelowMin() {
  * Returns 0 if there was a timeout.
  */
 uint8_t delayUntilChangeInOunces(uint8_t liquidAmount) {
+	// 8oz = 23.8mm
+	// 12oz = 35.7mm
+	// 16oz = 47.6mm
+
+	// 1oz = 2.976mm (change)
+
+
+
+
 	return 1;
 }

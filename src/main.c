@@ -95,10 +95,11 @@ int main(void) {
 	// Initialize all PWM pins
 	initializePWM();
 
+
 	// testFlashingLight();
-	// testButtonFlashingLight();
+	//testButtonFlashingLight();
 	//testPWM();
-	//testADC();
+	// testADC();
 
 	testAllLEDs();
 

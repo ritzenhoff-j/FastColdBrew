@@ -15,3 +15,5 @@ void testTempAndSonar();
 void testADC();
 
 void testAllLEDs();
+
+void testPortValues();

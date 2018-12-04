@@ -18,7 +18,7 @@
 
 typedef struct {
 	GPIO_TypeDef * port;
-	uint16_t pin;
+	uint32_t pin;
 } PinLocation;
 
 
@@ -38,8 +38,40 @@ typedef struct {
 // static const PinLocation SWCLK = { GPIOA, GPIO_Pin_14 };
 // nRST
 
+// Outputs
 static const PinLocation HBridgeEnablePin = { GPIOA, GPIO_Pin_4 };
+static const PinLocation RecircSol = { GPIOA, GPIO_Pin_7 };
+static const PinLocation ToVacChamberSol = { GPIOA, GPIO_Pin_9 };
+static const PinLocation PressureReleaseSol = { GPIOA, GPIO_Pin_10 };
+static const PinLocation CoffeeReleaseSol = { GPIOA, GPIO_Pin_11 };
 
+static const PinLocation WaterTempSensor = { GPIOB, GPIO_Pin_1 };
+static const PinLocation PeltierTempSensor = { GPIOB, GPIO_Pin_2 };
+static const PinLocation SonarSensorTrigger = { GPIOB, GPIO_Pin_3 };
+static const PinLocation PeltierSwitch = { GPIOB, GPIO_Pin_5 };
+
+static const PinLocation LowWaterLED = { GPIOC, GPIO_Pin_0 };
+static const PinLocation BrewMin1LED = { GPIOC, GPIO_Pin_1 };
+static const PinLocation BrewMin2LED = { GPIOC, GPIO_Pin_2 };
+static const PinLocation BrewMin3LED = { GPIOC, GPIO_Pin_3 };
+static const PinLocation CoolingOnLED = { GPIOC, GPIO_Pin_4 };
+static const PinLocation PressureOnLED = { GPIOC, GPIO_Pin_5 };
+static const PinLocation SmallButtonLED = { GPIOC, GPIO_Pin_6 };
+static const PinLocation MediumButtonLED = { GPIOC, GPIO_Pin_7 };
+static const PinLocation LargeButtonLED = { GPIOC, GPIO_Pin_8 };
+static const PinLocation TestLED = { GPIOC, GPIO_Pin_9 };
+static const PinLocation TxPin = { GPIOA, GPIO_Pin_3 };
+
+// Inputs
+static const PinLocation SonarSensorEcho = { GPIOB, GPIO_Pin_4 };
+static const PinLocation SmallButton = { GPIOB, GPIO_Pin_12 };
+static const PinLocation MediumButton = { GPIOB, GPIO_Pin_13 };
+static const PinLocation LargeButton = { GPIOB, GPIO_Pin_14 };
+static const PinLocation CancelButton = { GPIOB, GPIO_Pin_15 };
+static const PinLocation RxPin = { GPIOA, GPIO_Pin_2 };
+
+
+// PWM
 static const PinLocation VacuumPumpPin = { GPIOA, GPIO_Pin_5 };  // TIM2_CH1
 static const PinLocation RecircPumpPin = { GPIOA, GPIO_Pin_6 }; // TIM3_CH1
 static const PinLocation MixingMotorPin = { GPIOA, GPIO_Pin_8 }; // TIM1_CH1
@@ -52,38 +84,13 @@ static const PWM_PinLocation PWM_MixingMotor = { &MixingMotorPin, 1, 1 };
 static const PWM_PinLocation PWM_PeltierCoolingFan = { &PeltierCoolingFanPin, 4, 1 };
 
 
-static const PinLocation RecircSol = { GPIOA, GPIO_Pin_7 };
-static const PinLocation ToVacChamberSol = { GPIOA, GPIO_Pin_9 };
-static const PinLocation PressureReleaseSol = { GPIOA, GPIO_Pin_10 };
-static const PinLocation CoffeeReleaseSol = { GPIOA, GPIO_Pin_11 };
-
+// ADC Pins
 static const PinLocation PressureSensor = { GPIOB, GPIO_Pin_0 };
-static const PinLocation WaterTempSensor = { GPIOB, GPIO_Pin_1 };
-static const PinLocation PeltierTempSensor = { GPIOB, GPIO_Pin_2 };
-static const PinLocation SonarSensorTrigger = { GPIOB, GPIO_Pin_3 };
-static const PinLocation SonarSensorEcho = { GPIOB, GPIO_Pin_4 };
-static const PinLocation PeltierSwitch = { GPIOB, GPIO_Pin_5 };
-
 static const ADC_PinLocation ADC_PressureSensor = { &PressureSensor, TM_ADC_Channel_8 };
 
-static const PinLocation SmallButton = { GPIOB, GPIO_Pin_12 };
-static const PinLocation MediumButton = { GPIOB, GPIO_Pin_13 };
-static const PinLocation LargeButton = { GPIOB, GPIO_Pin_14 };
-static const PinLocation CancelButton = { GPIOB, GPIO_Pin_15 };
 
-static const PinLocation LowWaterLED = { GPIOC, GPIO_Pin_0 };
-static const PinLocation BrewMin1LED = { GPIOC, GPIO_Pin_1 };
-static const PinLocation BrewMin2LED = { GPIOC, GPIO_Pin_2 };
-static const PinLocation BrewMin3LED = { GPIOC, GPIO_Pin_3 };
-static const PinLocation CoolingOnLED = { GPIOC, GPIO_Pin_4 };
-static const PinLocation PressureOnLED = { GPIOC, GPIO_Pin_5 };
-static const PinLocation SmallButtonLED = { GPIOC, GPIO_Pin_6 };
-static const PinLocation MediumButtonLED = { GPIOC, GPIO_Pin_7 };
-static const PinLocation LargeButtonLED = { GPIOC, GPIO_Pin_8 };
-static const PinLocation TestLED = { GPIOC, GPIO_Pin_9 };
 
-static const PinLocation RxPin = { GPIOA, GPIO_Pin_2 };
-static const PinLocation TxPin = { GPIOA, GPIO_Pin_3 };
+
 
 
 // Array of all pins utilized for GPIO initialization
@@ -91,18 +98,20 @@ static const PinLocation TxPin = { GPIOA, GPIO_Pin_3 };
  * and will not allow the number to be a size for the PinLocation array */
 #define NUMBER_OF_OUTPUT_PINS ((int)20)
 static const PinLocation *outputPins[NUMBER_OF_OUTPUT_PINS] = {
-		&RecircSol, &ToVacChamberSol, &PressureReleaseSol, &CoffeeReleaseSol,
-		&WaterTempSensor, &PeltierTempSensor,
+		&HBridgeEnablePin,
+		&RecircSol,&ToVacChamberSol,&PressureReleaseSol,&CoffeeReleaseSol,
+		&WaterTempSensor,&PeltierTempSensor,
 		&SonarSensorTrigger,
 		&PeltierSwitch,
-		&LowWaterLED, &BrewMin1LED, &BrewMin2LED, &BrewMin3LED, &CoolingOnLED, &PressureOnLED,
-		&SmallButtonLED, &MediumButtonLED, &LargeButtonLED, &TestLED,
+		&LowWaterLED,&BrewMin1LED,&BrewMin2LED,&BrewMin3LED,
+		&CoolingOnLED,&PressureOnLED,
+		&SmallButtonLED,&MediumButtonLED,&LargeButtonLED,
+		&TestLED,
 		&TxPin};
 
-#define NUMBER_OF_INPUT_PINS ((int)7)
+#define NUMBER_OF_INPUT_PINS ((int)6)
 static const PinLocation *inputPins[NUMBER_OF_INPUT_PINS] = {
 		&SonarSensorEcho,
-		&PressureSensor,
 		&SmallButton, &MediumButton, &LargeButton, &CancelButton,
 		&RxPin };
 
