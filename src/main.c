@@ -101,10 +101,10 @@ int main(void) {
 	//testPWM();
 	// testADC();
 
-	testAllLEDs();
+	// testAllLEDs();
 
 	// Initialize all Peripheral Sensors (Temp, Sonar)
-	initializeAll_Peripherals();
+	// initializeAll_Peripherals();
 
 	// testTempAndSonar();
 
@@ -113,6 +113,9 @@ int main(void) {
 
 	// turn off ALL outputs
 	uint8_t brewSize = 0;
+
+	brewSize = 8;
+ 	machineState = BREWING;
 
 	while(1) {
 		switch(machineState) {
@@ -281,6 +284,8 @@ void fillVacuumChamber(uint8_t ozToFill) {
 		// there was a timeout
 	}
 
+	setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 0);
+
 	machineState = CREATING_VACUUM;
 }
 
@@ -306,34 +311,87 @@ void createVacuum() {
  */
 void brewCoffee(uint8_t ozSize) {
 	// turn on mixing motor
-	setPWM(PWM_MixingMotor.timerIndex, PWM_MixingMotor.channel, 100);
+
 
 	// ?? turn OFF vacuum pumps
-
-
 	uint32_t oneMinute = 60 * 1000;
 
-	// delay for one miute
-	Delayms(oneMinute);
-	// turn on appropriate indicator LED
-	GPIO_SetBits(BrewMin1LED.port, BrewMin1LED.pin);
+	uint32_t counter = 0;
+	uint32_t onCounter = 0;
+	uint32_t offCounter = 0;
 
-	// delay for another minute
-	Delayms(oneMinute);
-	// turn on appropriate indicator LED
-	GPIO_SetBits(BrewMin2LED.port, BrewMin2LED.pin);
+	uint8_t bool = 1;
+	uint8_t prevBool = 0;
 
-	// delay for another minute
-	Delayms(oneMinute);
-	// turn on appropriate indicator LED
-	GPIO_SetBits(BrewMin3LED.port, BrewMin3LED.pin);
+	uint8_t timeHit = 0;
+
+//	while(counter < 3 * oneMinute) {
+//		setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 50);
+//		counter++;
+//
+//		Delayms(1);
+//	}
+//
+//	return;
 
 
+	while(1) {
+		if(bool) {
+			if(prevBool != bool) {
+				setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 90);
+				prevBool = bool;
+			}
 
-	// turn OFF vacuum pumps
-	setPWM(PWM_VacuumPump.timerIndex, PWM_VacuumPump.channel, 0);
+			onCounter++;
+		}
+		else {
+			if(prevBool != bool) {
+				setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 0);
+				prevBool = bool;
+			}
 
-	// turn OFF mixing motor
+			offCounter++;
+		}
+
+		if(onCounter > 5000) {
+			onCounter = 0;
+			offCounter = 0;
+			bool = 0;
+		}
+
+		if(offCounter > 20000) {
+			offCounter = 0;
+			onCounter = 0;
+			bool = 1;
+		}
+
+
+		Delayms(1);
+		counter++;
+
+		// after a minute.. Turn on Min1 LED
+		if(counter > oneMinute && !(timeHit & 0x1)) {
+			GPIO_SetBits(BrewMin1LED.port, BrewMin1LED.pin);
+
+			timeHit |= 0x1;
+		}
+
+		// after another minute... Turn on Min2 LED
+		if(counter > oneMinute * 2 && !((timeHit >> 1) & 0x1)) {
+			GPIO_SetBits(BrewMin2LED.port, BrewMin2LED.pin);
+
+			timeHit |= 0x2;
+		}
+
+		// after a third minute... Turn on Min3 LED
+		if(counter > oneMinute * 3 && !((timeHit >> 2) & 0x1)) {
+			GPIO_SetBits(BrewMin3LED.port, BrewMin3LED.pin);
+
+			timeHit |= 0x4;
+		}
+	}
+
+	// turn off Mixing Motor
 	setPWM(PWM_MixingMotor.timerIndex, PWM_MixingMotor.channel, 0);
 
 	machineState = RELEASING_VACUUM;
@@ -390,7 +448,7 @@ void initializeAll_Peripherals() {
 
 	initializeAllTempSensors();
 
-	// initializeSonarSensor();
+	initializeSonarSensor();
 }
 
 
