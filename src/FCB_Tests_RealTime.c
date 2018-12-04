@@ -164,7 +164,7 @@ void testTempAndSonar() {
 
 	while(1) {
 		temperature = readTemperature(WaterTank);
-		// distance = readDistance();
+		distance = readDistance();
 	}
 }
 
