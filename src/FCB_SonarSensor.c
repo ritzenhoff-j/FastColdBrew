@@ -63,10 +63,32 @@ uint8_t delayUntilChangeInOunces(uint8_t liquidAmount) {
 	// 12oz = 35.7mm
 	// 16oz = 47.6mm
 
-	// 1oz = 2.976mm (change)
+	// 1oz = 1.976mm (change)
+	float dOunce = 1.976 / 9.5;
+	float liquidFloat = (float) (liquidAmount * 1.0);
 
+	float currentHeight = readDistance();
 
+	float endHeight = currentHeight + (dOunce * liquidFloat);
 
+	uint16_t counter = 0;
+
+	while(currentHeight < endHeight) {
+		currentHeight = readDistance();
+
+		if(counter < 200) {
+			counter++;
+
+			Delayms(50);
+		}
+		else {
+			setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 0);
+ 			counter = 0;
+			setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 50);
+		}
+	}
+
+	setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 0);
 
 	return 1;
 }
