@@ -20,6 +20,11 @@
 #include FCB_PWM
 #endif
 
+#ifndef TM_PWM
+#define TM_PWM "tm_stm32f4_pwm.h"
+#include TM_PWM
+#endif
+
 
 /*
  * The first channel of timers 1-4 are used
@@ -37,15 +42,19 @@
  * PeltierCoolingFan: TIM_4
  */
 
+TM_PWM_TIM_t TIM1_Data;
+
 void initializePWM() {
 	for(uint8_t timerArrayIndex = 0; timerArrayIndex < NUMBER_OF_TIMERS; timerArrayIndex++) {
 		uint8_t timerIndex = knownUsedTimers[timerArrayIndex];
 
-		initializeTimerClock(timerIndex);
+		if(timerIndex != 1) {
+			initializeTimerClock(timerIndex);
 
-		initializeTimerPWM(timerIndex, NUMBER_OF_PWM_PINS, *pwmPins);
+			initializeTimerPWM(timerIndex, NUMBER_OF_PWM_PINS, *pwmPins);
 
-		timer_start(timerIndex);
+			timer_start(timerIndex);
+		}
 	}
 }
 
