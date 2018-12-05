@@ -89,7 +89,7 @@ void testPWM() {
 	int brightness = 0;
 	int increment = 5;
 
-	setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 50);
+	setPWM(PWM_PeltierCoolingFan.timerIndex, PWM_PeltierCoolingFan.channel, 50);
 
 	while (1) {
 		for (int i = 0; i < 20; i++) {
@@ -114,6 +114,9 @@ void testButtonFlashingLight() {
 	uint8_t medium = 0;
 	uint8_t prevMed = 0;
 
+	uint8_t large = 0;
+	uint8_t prevLarge = 0;
+
 	int maxCount = 5000000;
 
 	int j = 0;
@@ -134,12 +137,21 @@ void testButtonFlashingLight() {
 			medium = 0;
 		}
 
+		if(GPIO_ReadInputDataBit(LargeButton.port, LargeButton.pin)) {
+			large = 1;
+		}
+		else {
+			large = 0;
+		}
+
+
+
 		if(prevSmall != small) {
 			if(small) {
-				GPIO_SetBits(LowWaterLED.port, LowWaterLED.pin);
+				GPIO_SetBits(SmallButtonLED.port, SmallButtonLED.pin);
 			}
 			else {
-				GPIO_ResetBits(LowWaterLED.port, LowWaterLED.pin);
+				GPIO_ResetBits(SmallButtonLED.port, SmallButtonLED.pin);
 			}
 
 			prevSmall = small;
@@ -147,13 +159,24 @@ void testButtonFlashingLight() {
 
 		if(prevMed != medium) {
 			if(medium) {
-				GPIO_SetBits(BrewMin1LED.port, BrewMin1LED.pin);
+				GPIO_SetBits(MediumButtonLED.port, MediumButtonLED.pin);
 			}
 			else {
-				GPIO_ResetBits(BrewMin1LED.port, BrewMin1LED.pin);
+				GPIO_ResetBits(MediumButtonLED.port, MediumButtonLED.pin);
 			}
 
 			prevMed = medium;
+		}
+
+		if(prevLarge != large) {
+			if(large) {
+				GPIO_SetBits(LargeButtonLED.port, LargeButtonLED.pin);
+			}
+			else {
+				GPIO_ResetBits(LargeButtonLED.port, LargeButtonLED.pin);
+			}
+
+			prevLarge = large;
 		}
 	}
 }
@@ -254,7 +277,7 @@ void testAllLEDs() {
 		Delayms(10000);
 
 		GPIO_SetBits(BrewMin3LED.port, BrewMin3LED.pin);
-		Delayms(10000);
+		Delayms(3000);
 	}
 }
 
