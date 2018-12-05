@@ -39,7 +39,10 @@ src/main.o: ../src/main.c \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/attributes.h \
  ../src/FCB_SonarSensor.h ../src/FCB_PressureSensor.h \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_delay.h \
- ../src/FCB_Tests_RealTime.h
+ ../src/FCB_Tests_RealTime.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_pwm.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_tim.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_timer_properties.h
 
 C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/CMSIS/device/stm32f4xx.h:
 
@@ -128,3 +131,9 @@ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/attributes.h:
 C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_delay.h:
 
 ../src/FCB_Tests_RealTime.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_pwm.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_tim.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_timer_properties.h:
