@@ -53,6 +53,11 @@
 #include FCB_TESTS_REALTIME
 #endif
 
+#ifndef TM_PWM
+#define TM_PWM "tm_stm32f4_pwm.h"
+#include TM_PWM
+#endif
+
 
 void SysTickInit(uint16_t frequency);
 
@@ -81,6 +86,7 @@ enum ColdBrewState {
 	EMPTYING_VACUUM_CHAMBER
 } static machineState;
 
+TM_PWM_TIM_t TIM1_Data;
 
 int main(void) {
 	// SystemInit() call from mcu sets the clock speed
@@ -95,16 +101,19 @@ int main(void) {
 	// Initialize all PWM pins
 	initializePWM();
 
+	setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 0);
+	setPWM(PWM_PeltierCoolingFan.timerIndex, PWM_PeltierCoolingFan.channel, 0.0);
+
 
 	// testFlashingLight();
-	//testButtonFlashingLight();
-	//testPWM();
+	// testButtonFlashingLight();
+	testPWM();
 	// testADC();
 
 	// testAllLEDs();
 
 	// Initialize all Peripheral Sensors (Temp, Sonar)
-	// initializeAll_Peripherals();
+	initializeAll_Peripherals();
 
 	// testTempAndSonar();
 
@@ -113,9 +122,6 @@ int main(void) {
 
 	// turn off ALL outputs
 	uint8_t brewSize = 0;
-
-	brewSize = 8;
- 	machineState = BREWING;
 
 	while(1) {
 		switch(machineState) {
@@ -168,6 +174,9 @@ void coolWaterTank() {
 
 	while(!isTemperatureBelowMax(WaterTank) || isWaterHeightBelowMin()) {
 
+		float temp = readTemperature(WaterTank);
+		float dist = readDistance();
+
 		if(isWaterHeightBelowMin()) {
 			if(lowWaterState) {
 				// turn ON low water level indicator LED
@@ -185,7 +194,6 @@ void coolWaterTank() {
 			// turn OFF low water level indicator LED
 			GPIO_ResetBits(LowWaterLED.port, LowWaterLED.pin);
 
-
 			// turn ON the cooling indicator LED
 			GPIO_SetBits(CoolingOnLED.port, CoolingOnLED.pin);
 
@@ -194,8 +202,6 @@ void coolWaterTank() {
 
 			// turn ON the Peltiers cooling fan
 			setPWM(PWM_PeltierCoolingFan.timerIndex, PWM_PeltierCoolingFan.channel, 100.0);
-
-
 
 			// set the Solenoids for recirculation
 			setSolenoidsForRecirc();
@@ -208,7 +214,7 @@ void coolWaterTank() {
 		Delayms(500);
 
 		// want to make sure that the peltiers are not constantly being turned on and off
-		// - Idealy only switches state if there have been numerous readings in the opposite state
+		// - Ideally only switches state if there have been numerous readings in the opposite state
 	}
 
 	// turn OFF the cooling indicator LED
@@ -334,11 +340,20 @@ void brewCoffee(uint8_t ozSize) {
 //
 //	return;
 
+	TM_PWM_InitTimer(TIM1, &TIM1_Data, 50);
+
+	/* Initialize PWM on TIM1, Channel 1 and PinsPack 1 = PA5 */
+	TM_PWM_InitChannel(&TIM1_Data, TM_PWM_Channel_1, TM_PWM_PinsPack_1);
+	TM_PWM_SetChannelMicros(&TIM1_Data, TM_PWM_Channel_1, 0);
+
 
 	while(1) {
 		if(bool) {
 			if(prevBool != bool) {
 				setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 90);
+				setPWM(PWM_VacuumPump.timerIndex, PWM_VacuumPump.channel, 90);
+				setPWM(PWM_PeltierCoolingFan.timerIndex,PWM_PeltierCoolingFan.channel,90);
+				TM_PWM_SetChannelMicros(&TIM1_Data, TM_PWM_Channel_1, 20000);
 				prevBool = bool;
 			}
 
@@ -347,6 +362,9 @@ void brewCoffee(uint8_t ozSize) {
 		else {
 			if(prevBool != bool) {
 				setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 0);
+				setPWM(PWM_VacuumPump.timerIndex, PWM_VacuumPump.channel, 0);
+				setPWM(PWM_PeltierCoolingFan.timerIndex,PWM_PeltierCoolingFan.channel,0);
+				TM_PWM_SetChannelMicros(&TIM1_Data, TM_PWM_Channel_1, 0);
 				prevBool = bool;
 			}
 
