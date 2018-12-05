@@ -49,7 +49,7 @@ float readDistance() {
  * Returns 1 if true.
  */
 uint8_t isWaterHeightBelowMin() {
-	return readDistance() < MinimumWaterHeight;
+	return readDistance() > MinimumWaterHeight;
 }
 
 /**

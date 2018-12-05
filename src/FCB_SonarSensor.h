@@ -16,7 +16,7 @@
  *
  * Value is distance from Sonar Sensor. Measured in centimeters.
  */
-static const int MinimumWaterHeight = 36;
+static const int MinimumWaterHeight = 20;
 
 
 uint8_t initializeSonarSensor();
