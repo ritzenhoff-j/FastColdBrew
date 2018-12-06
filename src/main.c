@@ -128,7 +128,7 @@ int main(void) {
 	// testTempAndSonar();
 
 	// The machine always starts by cooling
-	machineState = COOLING;
+	machineState = BREWING;
 
 	// turn off ALL outputs
 	uint8_t brewSize = 0;
@@ -136,12 +136,12 @@ int main(void) {
 	while(1) {
 		switch(machineState) {
 		case COOLING:
-			coolWaterTank();
+			// coolWaterTank();
 
-//			GPIO_SetBits(CoolingOnLED.port, CoolingOnLED.pin);
-//			Delayms(50000);
-//
-//			machineState = WAITING_FOR_SIZE;
+			GPIO_SetBits(CoolingOnLED.port, CoolingOnLED.pin);
+			Delayms(5000);
+
+			machineState = WAITING_FOR_SIZE;
 
 			break;
 
@@ -357,9 +357,9 @@ void fillVacuumChamber(uint8_t ozToFill) {
 	setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 50);
 
 	// delay until the water pump has been filled
-	if(!delayUntilChangeInOunces(ozToFill)) {
-		// there was a timeout
-	}
+//	if(!delayUntilChangeInOunces(ozToFill)) {
+//		// there was a timeout
+//	}
 
 	setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 0);
 
@@ -373,9 +373,9 @@ void createVacuum() {
 	// turn on the vacuum pumps
 	setPWM(PWM_VacuumPump.timerIndex, PWM_VacuumPump.channel, 100);
 
-	if(!delayUntilPressureBelowMax()) {
-		// timed out
-	}
+//	if(!delayUntilPressureBelowMax()) {
+//		// timed out
+//	}
 
 	// turn ON pressure on indicator LED
 	GPIO_SetBits(PressureOnLED.port, PressureOnLED.pin);
@@ -421,9 +421,6 @@ void brewCoffee(uint8_t ozSize) {
 	while(1) {
 		if(bool) {
 			if(prevBool != bool) {
-				setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 90);
-				setPWM(PWM_VacuumPump.timerIndex, PWM_VacuumPump.channel, 90);
-				setPWM(PWM_PeltierCoolingFan.timerIndex,PWM_PeltierCoolingFan.channel,90);
 				TM_PWM_SetChannelMicros(&TIM1_Data, TM_PWM_Channel_1, 20000);
 				prevBool = bool;
 			}
@@ -432,9 +429,6 @@ void brewCoffee(uint8_t ozSize) {
 		}
 		else {
 			if(prevBool != bool) {
-				setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 0);
-				setPWM(PWM_VacuumPump.timerIndex, PWM_VacuumPump.channel, 0);
-				setPWM(PWM_PeltierCoolingFan.timerIndex,PWM_PeltierCoolingFan.channel,0);
 				TM_PWM_SetChannelMicros(&TIM1_Data, TM_PWM_Channel_1, 0);
 				prevBool = bool;
 			}
@@ -494,9 +488,9 @@ void releaseVacuum() {
 	GPIO_SetBits(PressureReleaseSol.port, PressureReleaseSol.pin);
 
 	// delay until the pressure has reached normal levels
-	if(!delayUntilPressureAtRoom()) {
-		// delay timed out
-	}
+//	if(!delayUntilPressureAtRoom()) {
+//		// delay timed out
+//	}
 
 	// turn OFF pressure on indicator LED
 	GPIO_ResetBits(PressureOnLED.port, PressureOnLED.pin);
@@ -511,9 +505,9 @@ void emptyVacuumChamber(uint8_t ozSize) {
 	// open the vacuum chamber release (pressure release should still be open)
 	GPIO_SetBits(CoffeeReleaseSol.port, CoffeeReleaseSol.pin);
 
-	int timeToEmpty = 30 * 1000;
-
-	Delayms(timeToEmpty);
+//	int timeToEmpty = 30 * 1000;
+//
+//	Delayms(timeToEmpty);
 
 	// close the pressure release
 	GPIO_ResetBits(CoffeeReleaseSol.port, CoffeeReleaseSol.pin);
