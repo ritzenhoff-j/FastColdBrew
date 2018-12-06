@@ -102,12 +102,22 @@ int main(void) {
 	initializePWM();
 
 	setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 0);
-	setPWM(PWM_PeltierCoolingFan.timerIndex, PWM_PeltierCoolingFan.channel, 0.0);
+	setPWM(PWM_PeltierCoolingFan.timerIndex, PWM_PeltierCoolingFan.channel, 0);
+	setPWM(PWM_VacuumPump.timerIndex, PWM_VacuumPump.channel, 0);
+
+	GPIO_ResetBits(GPIOA, GPIO_Pin_All);
+	GPIO_ResetBits(GPIOB, GPIO_Pin_All);
+	GPIO_ResetBits(GPIOC, GPIO_Pin_All);
+
+
+
+	// Turn on the ENABLE for all 12V HBridges
+	GPIO_SetBits(HBridgeEnablePin.port, HBridgeEnablePin.pin);
 
 
 	// testFlashingLight();
 	// testButtonFlashingLight();
-	testPWM();
+	// testPWM();
 	// testADC();
 
 	// testAllLEDs();
@@ -127,6 +137,12 @@ int main(void) {
 		switch(machineState) {
 		case COOLING:
 			coolWaterTank();
+
+//			GPIO_SetBits(CoolingOnLED.port, CoolingOnLED.pin);
+//			Delayms(50000);
+//
+//			machineState = WAITING_FOR_SIZE;
+
 			break;
 
 		case WAITING_FOR_SIZE:
@@ -169,8 +185,10 @@ void SysTickInit (uint16_t frequency)
  * Cools the water chamber below its hardcoded threshold by turning on Peltiers.
  */
 void coolWaterTank() {
+	uint8_t lowWaterState = 0;
 
-	uint8_t lowWaterState = 0 ;
+	uint8_t state = 0;
+	uint8_t prevState = 1;
 
 	while(!isTemperatureBelowMax(WaterTank) || isWaterHeightBelowMin()) {
 
@@ -178,36 +196,48 @@ void coolWaterTank() {
 		float dist = readDistance();
 
 		if(isWaterHeightBelowMin()) {
-			if(lowWaterState) {
-				// turn ON low water level indicator LED
-				GPIO_SetBits(LowWaterLED.port, LowWaterLED.pin);
-			}
-			else {
-				// turn OFF low water level indicator LED
-				GPIO_ResetBits(LowWaterLED.port, LowWaterLED.pin);
-			}
+			if(state != prevState) {
 
-			// this creates a blinking of the light
-			lowWaterState = ~lowWaterState;
+				if(lowWaterState) {
+					// turn ON low water level indicator LED
+					GPIO_SetBits(LowWaterLED.port, LowWaterLED.pin);
+				}
+				else {
+					// turn OFF low water level indicator LED
+					GPIO_ResetBits(LowWaterLED.port, LowWaterLED.pin);
+				}
+
+				// this creates a blinking of the light
+				lowWaterState = ~lowWaterState;
+
+				state = prevState;
+			}
 		}
 		else {
-			// turn OFF low water level indicator LED
-			GPIO_ResetBits(LowWaterLED.port, LowWaterLED.pin);
+			if(state != prevState) {
+				// turn OFF low water level indicator LED
+				GPIO_ResetBits(LowWaterLED.port, LowWaterLED.pin);
 
-			// turn ON the cooling indicator LED
-			GPIO_SetBits(CoolingOnLED.port, CoolingOnLED.pin);
+				// turn ON the cooling indicator LED
+				GPIO_SetBits(CoolingOnLED.port, CoolingOnLED.pin);
 
-			// turn ON the Peltiers
-			GPIO_SetBits(PeltierSwitch.port, PeltierSwitch.pin);
+				// turn ON the Peltiers
+				GPIO_SetBits(PeltierSwitch.port, PeltierSwitch.pin);
 
-			// turn ON the Peltiers cooling fan
-			setPWM(PWM_PeltierCoolingFan.timerIndex, PWM_PeltierCoolingFan.channel, 100.0);
+				// turn ON the Peltiers cooling fan
+				// setPWM(PWM_PeltierCoolingFan.timerIndex, PWM_PeltierCoolingFan.channel, 100.0);
 
-			// set the Solenoids for recirculation
-			setSolenoidsForRecirc();
+				// turn ON the recirculation pump ALSO turns on FAN
+				setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 50);
 
-			// turn ON the recirculation pump
-			setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 50);
+				// set the Solenoids for recirculation
+				setSolenoidsForRecirc();
+				// turn OFF toVacSol
+				//				GPIO_ResetBits(ToVacChamberSol.port, ToVacChamberSol.pin);
+				//				GPIO_SetBits(RecircSol.port, RecircSol.pin);
+
+				state = prevState;
+			}
 		}
 
 		// delay for a short period of time (from TM library)
@@ -244,28 +274,69 @@ uint8_t getSizeInput() {
 
 	uint8_t size = 0;
 
+	uint16_t size8Counter = 0;
+	uint16_t size10Counter = 0;
+	uint16_t size12Counter = 0;
+
+	uint16_t pushDownTime = 40000;
+
+	GPIO_SetBits(SmallButtonLED.port, SmallButtonLED.pin);
+	GPIO_SetBits(MediumButtonLED.port, MediumButtonLED.pin);
+	GPIO_SetBits(LargeButtonLED.port, LargeButtonLED.pin);
+
 	while(size == 0) {
-
 		if(GPIO_ReadInputDataBit(SmallButton.port, SmallButton.pin)) {
-			size = 8;
+			size8Counter++;
 
-			break;
+			if(size8Counter > pushDownTime) {
+				size = 8;
+				break;
+			}
+
+		}
+		else {
+			size8Counter = 0;
 		}
 
 		if(GPIO_ReadInputDataBit(MediumButton.port, MediumButton.pin)) {
-			size = 10;
+			size10Counter++;
 
-			break;
+			if(size10Counter > pushDownTime) {
+				size = 10;
+				break;
+			}
+
 		}
+		else {
+			size10Counter = 0;
+		}
+
 
 		if(GPIO_ReadInputDataBit(LargeButton.port, LargeButton.pin)) {
-			size = 12;
+			size12Counter++;
 
-			break;
+			if(size12Counter > pushDownTime) {
+				size = 12;
+				break;
+			}
+
 		}
+		else {
+			size12Counter = 0;
+		}
+	}
 
-		// delay for 500 ms
-		Delayms(500);
+
+	if(size != 8) {
+		GPIO_ResetBits(SmallButtonLED.port, SmallButtonLED.pin);
+	}
+
+	if(size != 10) {
+		GPIO_ResetBits(MediumButtonLED.port, MediumButtonLED.pin);
+	}
+
+	if(size != 12) {
+		GPIO_ResetBits(LargeButtonLED.port, LargeButtonLED.pin);
 	}
 
 
@@ -410,7 +481,7 @@ void brewCoffee(uint8_t ozSize) {
 	}
 
 	// turn off Mixing Motor
-	setPWM(PWM_MixingMotor.timerIndex, PWM_MixingMotor.channel, 0);
+	TM_PWM_SetChannelMicros(&TIM1_Data, TM_PWM_Channel_1, 0);
 
 	machineState = RELEASING_VACUUM;
 }

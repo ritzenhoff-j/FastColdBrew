@@ -25,6 +25,11 @@
 #include FCB_GPIO_PINS
 #endif
 
+#ifndef TM_DELAY
+#define TM_DELAY "tm_stm32f4_delay.h"
+#include TM_DELAY
+#endif
+
 // Defined in data sheet of pressure sensor
 static const float conversionDivisorConst = 0.007652;
 static const float conversionSubstractionConst = 0.92;
@@ -69,6 +74,17 @@ uint8_t isPressureBelowMax() {
  * Returns 0 if the code timed out.
  */
 uint8_t delayUntilPressureBelowMax() {
+
+	float currentPressure = -0.1;
+
+	while(1) {
+		if(isPressureBelowMax()) {
+			return 1;
+		}
+
+		Delayms(500);
+	}
+
 	return 1;
 }
 
@@ -77,5 +93,11 @@ uint8_t delayUntilPressureBelowMax() {
  * Delays the code until the pressure rises above the default room.
  */
 uint8_t delayUntilPressureAtRoom() {
-	return 1;
+	while(1) {
+		if(readPressure() > -5) {
+			return 1;
+		}
+
+		Delayms(500);
+	}
 }

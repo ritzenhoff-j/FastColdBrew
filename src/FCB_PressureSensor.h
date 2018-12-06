@@ -10,7 +10,7 @@
  *
  * Value is distance from Sonar Sensor. Measured in centimeters.
  */
-static const float MaxAllowedPressure = -16;
+static const float MaxAllowedPressure = -9;
 
 float readPressure();
 

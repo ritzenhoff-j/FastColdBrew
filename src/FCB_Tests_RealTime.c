@@ -89,14 +89,14 @@ void testPWM() {
 	int brightness = 0;
 	int increment = 5;
 
-	setPWM(PWM_PeltierCoolingFan.timerIndex, PWM_PeltierCoolingFan.channel, 50);
+	setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, 50);
 
 	while (1) {
 		for (int i = 0; i < 20; i++) {
 
 			for(int j = 0; j < 50000; j++) { l = j; }
 
-			setPWM(PWM_PeltierCoolingFan.timerIndex, PWM_PeltierCoolingFan.channel, brightness);
+			setPWM(PWM_RecircPump.timerIndex, PWM_RecircPump.channel, brightness);
 
     			brightness += increment;
 		}

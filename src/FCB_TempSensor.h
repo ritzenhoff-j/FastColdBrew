@@ -26,7 +26,7 @@ typedef enum {
 /**
  * The maximum temperature that the water is allowed to be before the coffee making can commence.
  */
-static const int WaterTargetMaxTemp = 7;
+static const int WaterTargetMaxTemp = 18;
 
 /**
  * Maximum temperature that the Peltiers can reach before being shut-off.

@@ -41,9 +41,10 @@ typedef struct {
 // Outputs
 static const PinLocation HBridgeEnablePin = { GPIOA, GPIO_Pin_4 };
 static const PinLocation RecircSol = { GPIOA, GPIO_Pin_7 };
+// static const PinLocation RecircSol = { GPIOA, GPIO_Pin_13 };
 static const PinLocation ToVacChamberSol = { GPIOA, GPIO_Pin_9 };
 static const PinLocation PressureReleaseSol = { GPIOA, GPIO_Pin_10 };
-static const PinLocation CoffeeReleaseSol = { GPIOA, GPIO_Pin_11 };
+static const PinLocation CoffeeReleaseSol = { GPIOA, GPIO_Pin_13 };
 
 static const PinLocation WaterTempSensor = { GPIOB, GPIO_Pin_1 };
 static const PinLocation PeltierTempSensor = { GPIOB, GPIO_Pin_2 };

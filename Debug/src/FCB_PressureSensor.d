@@ -33,7 +33,9 @@ src/FCB_PressureSensor.o: ../src/FCB_PressureSensor.c \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/StdPeriph_Driver/inc/stm32f4xx_adc.h \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/defines.h \
  C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_gpio.h \
- ../src/FCB_GPIO_Pins.h
+ ../src/FCB_GPIO_Pins.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_delay.h \
+ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/attributes.h
 
 C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/CMSIS/device/stm32f4xx.h:
 
@@ -104,3 +106,7 @@ C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/defines.h:
 C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_gpio.h:
 
 ../src/FCB_GPIO_Pins.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/tm_stm32f4_delay.h:
+
+C:/Users/ritze/SystemWorkbenchWorkspace/Fast\ Cold\ Brew/inc/attributes.h:
